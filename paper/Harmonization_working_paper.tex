@@ -121,7 +121,7 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{\vspace{1cm}Ex-post Survey Data Harmonization Toolbox*\footnote{*Corresponding address: \href{mailto:kolczynska.1@osu.edu}{\nolinkurl{kolczynska.1@osu.edu}}. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research.}\vspace{0.5cm}\\}
+  \title{\vspace{1cm}Ex-post Survey Data Harmonization Toolbox: A Reproducible and User-Friendly Worlflow*\footnote{*Corresponding address: \href{mailto:kolczynska.1@osu.edu}{\nolinkurl{kolczynska.1@osu.edu}}. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research.}\vspace{0.5cm}\\}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
     \author{Marta Kołczyńska\\
@@ -130,10 +130,10 @@ Institute of Philosophy and Sociology, Polish Academy of Sciences}
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{29 March, 2019\\
+    \date{30 March, 2019\\
 ~\\}
 
-\usepackage[english]{babel}
+\usepackage[polish, english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{float}
 \usepackage{lmodern}
@@ -164,9 +164,9 @@ Institute of Philosophy and Sociology, Polish Academy of Sciences}
 \usepackage{tabu}
 \usepackage{wrapfig}
 
-\usepackage[T1]{fontenc}
-%\usepackage[polish]{babel}
+\usepackage{babel}
 \usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{0229}{\k{e}}
 
 \crefformat{footnote}{#2\footnotemark[#1]#3}
 \usepackage{color}
@@ -186,7 +186,6 @@ Institute of Philosophy and Sociology, Polish Academy of Sciences}
 \makeatletter
 % Separation between lines
 \doublerulesep 1pt
-\doublespacing
 
 \usepackage[table]{xcolor}
 
@@ -239,7 +238,7 @@ Institute of Philosophy and Sociology, Polish Academy of Sciences}
 \begin{document}
 \maketitle
 \begin{abstract}
-\noindent\setstretch{1}Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While an increasing number of scholars combine different survey projects to analyze them as a single dataset, there is substantial variation in the understanding of what ex-post harmonization entails, and with regard to the methods of data processing and documentation. In this paper I propose a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on the programming language R and Excel spreadsheets - both common software among social scientists. This approach combines automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standard observed in survey datasets. The resulting documentation of the harmonization process is user-friendly and readible without the knolwedge of any programming language. Variables on trust in institutions from three cross-national survey projects serve as an illustrate of the proposed workflow.\vspace{.8cm}
+\noindent\setstretch{1}Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While an increasing number of scholars combine different survey projects to analyze them as a single dataset, there is substantial variation in the understanding of what ex-post harmonization entails, and with regard to the methods of data processing, documentation, as well as the reproducibility of all procedures on the basis of materials the projects make publicly available. In this paper I propose a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks and a combination of automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standard observed in survey datasets. The resulting documentation of the harmonization process is user-friendly and readible without the knolwedge of any programming language. The presented tools rely on the programming language R and spreadsheets - both common software among social scientists. Harmonization of variables on trust in institutions from three cross-national survey projects serve as an illustrate of the proposed workflow.\vspace{.8cm}
 \end{abstract}
 
 \clearpage
@@ -250,10 +249,7 @@ Institute of Philosophy and Sociology, Polish Academy of Sciences}
 
 \clearpage
 
-\hypertarget{abstract}{%
-\section{Abstract}\label{abstract}}
-
-Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While an increasing number of scholars combine different survey projects to analyze them as a single dataset, there is substantial variation in the understanding of what ex-post harmonization entails, and with regard to the methods of data processing and documentation. In this paper I propose a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on the programming language R and Excel spreadsheets - both common software among social scientists. This approach combines automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standard observed in survey datasets. The resulting documentation of the harmonization process is user-friendly and readible without the knolwedge of any programming language. Variables on trust in institutions from three cross-national survey projects serve as an illustrate of the proposed workflow.
+\parindent 0.5in
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -271,7 +267,7 @@ Reproducibility not only concerns research publications, but also processed data
 In this paper I propose a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks for mapping one coding scheme onto another. The proposed approach includes automated steps that ensure reproducibility and efficiency of data processing, with human decision-making to integrate methodological expertise and domain knowledge, and enable flexibility necessary in dealing with the variation and diverse standard observed in survey datasets.
 The product of the harmonization process is its documentation in form of crosswalk tables that map (1) source variables to target variables and (2) source values to target values. The human-friendly character and readibility of crosswalks enables the verification and reproduction of the harmonization process.
 
-The example presented in this paper uses the programming language R and Excel spreadsheets - both common software among social scientists. The general framework combining recoding syntax and spreadsheets is software-agnostic and can be used with any programming language. Survey variables on trust in institutions from three cross-national survey projects - the European Social Survey, the European Values Study, the European Quality of Life Survey - serve as an illustration of the proposed workflow.
+The example presented in this paper uses the programming language R and spreadsheets - both common software among social scientists. The general framework combining recoding syntax and spreadsheets is software-agnostic and can be used with any programming language. Survey variables on trust in institutions from three cross-national survey projects - the European Social Survey, the European Values Study, the European Quality of Life Survey - serve as an illustration of the proposed workflow.
 
 This work builds on the experiences of four inter-related projects: (1) the \emph{Democratic Values and Protest Behavior: Data Harmonization, Measurement Comparability, and Multi-Level Modeling} project funded by the (Polish) National Science Centre (2012/06/M/HS6/00322, 2013-2016), its continuation \emph{Survey Data Recycling: New Analytic Framework, Integrated Database, and Tools for Cross-national Social, Behavioral and Economic Research} funded by the U.S. National Science Foundation (2017-2021, PTE Federal award 1738502), (3) \emph{New Approach to Analyses of the Relationship between Democracy and Trust: Comparing European Countries Using Quantitative and Qualitative Methodology} funded by the (Polish) National Science Centre (2012/05/N/HS6/03886, 2013-2015), (4) \emph{Stratified modernity, trust in state institutions and democratic change in cross-national perspective: using harmonized survey data from 116 countries} project supported by the Silverman Research Support Award from the Department of Sociology, The Ohio State University (2017), and (5) \emph{Effects of status inconsistency on political values, attitudes and behavior: a cross-national analysis with survey data harmonized ex post}, funded by the Institute of Philosophy and Sociology, Polish Academy of Science (2017/S/05, 2018).
 
@@ -335,32 +331,31 @@ Ex-post (or retrospective) data harmonization refers to procedures applied to al
 \hypertarget{ex-post-survey-data-harmonization-projects-a-non-exhaustive-review}{%
 \subsection{Ex-post survey data harmonization projects: A non-exhaustive review}\label{ex-post-survey-data-harmonization-projects-a-non-exhaustive-review}}
 
-Researchers increasingly combine data from multiple survey projects to fill in the gaps in geographical coverage, or to increase the presence of typically underrepresented countries, e.g.~autocracies or countries from the Global South. Identifying projects that turn to ex-post survey data harmonization is not easy, because the term ``ex-post harmonization'' is not often used. This section briefly describe the approaches taken in a non-representative sample of ex-post survey data harmonization projects. The number of publications relying on survey data harmonized ex-post is difficult to know, because the term ``ex-post survey data harmonization'' is not widely used as the name of this procedure. An alternative term, ``integrative data analysis'', proposed by Curran \& Hussong (\protect\hyperlink{ref-Curran2009}{2009}), has not caught on either.
+Researchers increasingly combine data from multiple survey projects to fill in the gaps in geographical coverage, or to increase the presence of typically underrepresented countries, e.g.~autocracies or countries from the Global South. Identifying projects that turn to ex-post survey data harmonization is not easy, because the term ``ex-post harmonization'' is not often used. This section briefly describe the approaches taken in a non-representative sample of ex-post survey data harmonization projects. The number of publications relying on survey data harmonized ex-post is difficult to know, because the term ``ex-post survey data harmonization'' is not widely used as the name of this procedure. An alternative term, ``integrative data analysis'', proposed by Curran and Hussong (\protect\hyperlink{ref-Curran2009}{2009}), has not caught on either.
 
 Based on a non-systematic review of ex-post survey data harmonization projects, two broad categories can be distinguished: small-scale projects where harmonization is performed for the purposes of a single paper or dissertation, and large-scale projects that enable multiple different analyses with the general aim of improving the social science research infrastructure.
 
 \hypertarget{small-scale-projects}{%
 \subsubsection{Small-scale projects}\label{small-scale-projects}}
 
-The two small-scale projects I identified, ex-post survey data harmonization provided data for dissertation research. The first project (Christmann, \protect\hyperlink{ref-Christmann2018}{2018}; Christmann \& Torcal, \protect\hyperlink{ref-Christmann2018a}{2018}) harmonized data from several cross-national and national survey projects. The selection criterion for the projects was a particular design of the satisfaction with democracy question, which was the key variable in the analysis: only surveys where a four-point response scale was used were harmonized (Christmann, \protect\hyperlink{ref-Christmann2018}{2018}; Christmann \& Torcal, \protect\hyperlink{ref-Christmann2018a}{2018}). Replication materials that accompany the paper, available from Harvard's Dataverse, include the final harmonized data file and code for conducting the analysis, but no harmonization syntax (\url{https://doi.org/10.7910/DVN/EU541C}).
+The two small-scale projects I identified, ex-post survey data harmonization provided data for dissertation research. The first project (Christmann, \protect\hyperlink{ref-Christmann2018}{2018}; Christmann \& Torcal, \protect\hyperlink{ref-Christmann2018a}{2018}) harmonized data from several cross-national and national survey projects. The selection criterion for the projects was a particular design of the satisfaction with democracy question, which was the key variable in the analysis: only surveys where a four-point response scale was used were harmonized. Replication materials that accompany the paper, available from Harvard's Dataverse, include the final harmonized data file and code for conducting the analysis, but no harmonization syntax\footnote{Christmann, Pablo; Torcal, Mariano, 2017, ``Replication Data for: The Effects of Government System Fractionalization on Satisfaction with Democracy'', \url{https://doi.org/10.7910/DVN/EU541C}, Harvard Dataverse, V1.}.
 
-The second project deals with political trust and democratic values, and relies on data from six cross-national survey projects from a hundred countries and almost global coverage (Mauk, \protect\hyperlink{ref-Mauk2019}{2019}). Replication materials, also stored on Dataverse, include a recoding syntax file with all the code necessary to create the harmonized variables used in subsequent analyses. The harmonized dataset is not provided (\url{https://doi.org/10.7910/DVN/IIVAJM}).
+The second project deals with political trust and democratic values, and relies on data from six cross-national survey projects from a hundred countries and almost global coverage (Mauk, \protect\hyperlink{ref-Mauk2019}{2019}). Replication materials, also stored on Dataverse, include a recoding syntax file with all the code necessary to create the harmonized variables used in subsequent analyses. The harmonized dataset is not provided\footnote{Mauk, Marlene, 2019, ``Replication Data for: Disentangling an elusive relationship'', \url{https://doi.org/10.7910/DVN/IIVAJM}, Harvard Dataverse, V1.}.
 
 \hypertarget{infrastructure-projects}{%
 \subsubsection{Infrastructure projects}\label{infrastructure-projects}}
 
 There are at least three large-scale projects that perform ex-post survey data harmonization. The first one is the Democratic Values and Protest Behavior (DVPB) project (Slomczynski \& Tomescu-Dubrow, \protect\hyperlink{ref-Slomczynski2018}{2018}, p. @Slomczynskietal2016), which harmonized selected variables on political participation, political trust, and basic socio-demographics, from 22 major international survey projects between 1966 and 2013. The data are publicly available via Harvard's Dataverse\footnote{The data and documentation from the Democratic Values and Protest Behavior (DVPB) project are available via Dataverse at \url{https://doi.org/10.7910/DVN/VWGF5Q}}
-The project, now completed, used a suite of open-source tools for extracting source data, applying the harmonization procedures, and outputting data files in a format usable by social scientists. The programming environment is based on scripting tools, while data processing occurs in a MySQL database (Powałko \& Kołczyńska, \protect\hyperlink{ref-Powako2016}{2016}). The publicly available documentation consists of codebooks, recode syntax in SQL and lists of source variable names selected for harmonization from each dataset.
+The project, now completed, used a suite of open-source tools for extracting source data, applying the harmonization procedures, and outputting data files in a format usable by social scientists. The programming environment is based on scripting tools, while data processing occurs in a MySQL database (Powałko \& Kołczyńska, \protect\hyperlink{ref-Powako2016}{2016}). The publicly available documentation consists of codebooks, recode syntax in SQL and lists of source variable names selected for harmonization from each dataset (Slomczynski et al., \protect\hyperlink{ref-Slomczynskietal2017}{2017}).
 The continuation of this initiative, the Survey Data Recycling project (dataharmonization.org), will extend the set of harmonized variable to also include social capital and well-being indicators, and update the data up until 2017.
 
-The second project, Human Understanding Measured Across National Surveys (HUMANS, humansurveys.org) uses data from 19 cross-national and national survey projects, many of them the same as in the previous project, and harmonized variables on social trust, satisfaction with democracy, support for democracy, and perceived electoral integrity, as well as basic socio-demographics. The data are also freely available.\footnote{The data and documentation from the Human Understanding Measured Across National Surveys (HUMANS, humansurveys.org) projects are available at \url{https://dataverse.harvard.edu/dataverse/humansurveys}.}
-In terms of documentation, the codebook (Klassen, \protect\hyperlink{ref-Klassen2018}{2018}) provides the recodes from source to target coding schemes, names of source variables, and names of source data files, all in a PDF document.
+The second project, Human Understanding Measured Across National Surveys (HUMANS, humansurveys.org) uses data from 19 cross-national and national survey projects, many of them the same as in the previous project, and harmonized variables on social trust, satisfaction with democracy, support for democracy, and perceived electoral integrity, as well as basic socio-demographics. The data are also freely available.\footnote{The data and documentation from the Human Understanding Measured Across National Surveys (HUMANS, humansurveys.org) projects are available at \url{https://dataverse.harvard.edu/dataverse/humansurveys}.} In terms of documentation, the codebook (Klassen, \protect\hyperlink{ref-Klassen2018}{2018}) provides the recodes from source to target coding schemes, names of source variables, and names of source data files, all in a PDF document.
 
 The third initiative, the Harmonized Trust Database created by the Global Trust Research Consortium (GTRC) (globaltrustresearch.wordpress.com), contains data from 79 national and cross-national survey projects, covering 155 countries since 1953. The project Open Science Framework profile\footnote{The Harmonized Trust Database created by the Global Trust Research Consortium (GTRC) (globaltrustresearch.wordpress.com) makes the documentation available via OSF at \url{https://osf.io/qfv76/}} provides a PDF codebook (Sandberg \& Bekkers, \protect\hyperlink{ref-Sandberg2018}{2018}) with names of source projects, but without data file versions or source variable names. The harmonized data are not publicly available.
 
 The three projects have very similar goals and scopes - in terms of the type of source data and the substantive interest in harmonizing particular variables - and yet, their approaches to documenting the harmonization, and the extent the harmonization is reproducible, are very different. While the DVPB project published voluminous documentation, in practice the exact replication of all harmonization procedures would most likely not be straightforward, despite the natural language-resembling nature of SQL, due to complications with re-creating the software environment. The HUMANS project published source and target variables, but the recoding schema is provided in a PDF document - not the most machine-readable format. GTRC provides neither the recode schemas, nor the resulting data.
 
-The three large project described in this section also have one other thing in common: with the data and documentation made public by these projects it is not possible to extend the dataset by adding extra harmonized target variables. The reason is that the two projects that provide the harmonized data - DVPB and HUMANS - do not include original respondent (case) IDs from the source data files, so even though it is possible to construct additional variables separately, it is impossible to match them to the already harmonized data.
+The three large project described in this section have two other things in common. First, with the data and documentation made public by these projects it is not possible to extend the dataset by adding extra harmonized target variables. The reason is that the two projects that provide the harmonized data - DVPB and HUMANS - do not include original respondent (case) IDs from the source data files, so even though it is possible to construct additional variables separately, it is impossible to match them to the already harmonized data. Second, while all three are performing very similar and labor-intensive tasks with similar scopes, they have not (at the time of writing) communicated or shared experiences, not to mention building on each other's work (as already noted by Winters \& Netscher, \protect\hyperlink{ref-Winters2016}{2016}).
 
 \hypertarget{the-proposed-workflow}{%
 \section{The proposed workflow}\label{the-proposed-workflow}}
@@ -369,30 +364,34 @@ In the proposed workflow harmonization documentation is a product of the harmoni
 
 The procedure starts with all the source data files downloaded to a single location, and their origin and versions noted. Next, each source data file is imported to R, and inspected to create the following technical variables: source case ID, target case ID (row number in the data file), survey project, survey wave/round identifier, survey year, survey country, and case weights.
 
-In terms of data processing, the harmonization work involves working with data at different levels. For each of these steps, a corresponding table is created on the basis of the source data, and exported to Excel for manual mapping. The resulting crosswalks are used in the next step of harmonization, and at the same time serve as documentation.
+In terms of data processing, the harmonization work involves working with data at different levels. For each of these steps, a corresponding table is created on the basis of the source data, and exported to a spreadsheet program for manual mapping. The resulting crosswalks are used in the next step of harmonization, and at the same time serve as documentation.
 
-Crosswalks are commonly used tools for mapping of one schema onto the other. They are most useful when the source schema can be unambiguously translated into the target schema. This is rarely the case as exemplified by the many examples of class schemas developed in the social sciences. Also in the process of ex-post survey data harmonization, in some cases the mapping is not straightforward and decisions, sometimes arbitrary, need to be made. Like in other cases, also here, ``{[}T{]}he key to a successful metadata crosswalk is intelligent flexibility'' (Hillmann \& Westbrooks, \protect\hyperlink{ref-Hillmann2004}{2004}, p. 91). This is why the mapping is performed manually. Given the typical number of variables harmonized, this should not be an excessive effort.
+Crosswalks are commonly used tools for mapping of one schema onto the other. They are most useful when the source schema can be unambiguously translated into the target schema. This is rarely the case as exemplified by the many examples of class schemas developed in the social sciences. Also in the process of ex-post survey data harmonization, in some cases the mapping is not straightforward and decisions, sometimes arbitrary, need to be made. Like in other cases, also here, ``{[}T{]}he key to a successful metadata crosswalk is intelligent flexibility'' (Hillmann \& Westbrooks, \protect\hyperlink{ref-Hillmann2004}{2004}, p. 91). This is why mapping is performed manually. Given the typical number of variables harmonized, this should not be an excessive effort.
+
+\parindent 0in
 
 Step 1: Selection of source variables for harmonization,\\
 Step 2: Mapping source values to target values,\\
 Step 3: Recording characteristics of source items.
 
-The first step is at the variable level, and involves identifying variables for harmonization in the source data files, and assigning a standardized target variable name to each source variable of interest. To do this, a table with a list of all source variables is created on the basis of metadata from the source data files, and includes variable names, labels, as well as values and value labels and their corresponding frequencies. Each variable corresponds to a single row in the resulting table, which I refer to as the \emph{codebook}. The codebook is then exported to Excel (or other spreadsheet program), where variable lables are filtered to inentify candidates for source variables. In some cases, for example is variable labels are too short or otherwise uninformative - the original survey documentation needs to be consulted. After all source variables corresponding to the concept of interest - in this case trust in institutions - are identified via filter searches or otherwise, the table is imported back into R.
+\parindent 0.5in
+
+The first step is at the variable level, and involves identifying variables for harmonization in the source data files, and assigning a standardized target variable name to each source variable of interest. To do this, a table with a list of all source variables is created on the basis of metadata from the source data files, and includes variable names, labels, as well as values and value labels and their corresponding frequencies. Each variable corresponds to a single row in the resulting table, which I refer to as the \emph{codebook}. The codebook is then exported to a spreadsheet program, where variable lables are filtered to inentify candidates for source variables. In some cases, for example is variable labels are too short or otherwise uninformative - the original survey documentation needs to be consulted. After all source variables corresponding to the concept of interest - in this case trust in institutions - are identified via filter searches or otherwise, the table is imported back into R.
 
 The second step is at the level of individual values of the source variables, and requires mapping these source values onto a common coding scheme of the respective target variable. Subsets of source data files are selected that include only the variables tagged in Step 1. For those variables, a \emph{cross-walk table} is created, i.e., a table similar to the codebook, but where each source value corresponds to one row. This table is then exported to a spreadsheet, where each source value is assigned a target value on the basis of the common coding scheme. This step also includes identifying missing value codes (such as negative numbers or multiples of 8 or 9) as missing. Next, the cross-walk table is imported back to R, where the source and target values for each source variable are mapped resulting in the harmonized variables.
 
-The third step is at the data file level, and refers to the coding of properties of the source variables that are worth preserving because of methodological reasons, such as the length or direction of the original response scales. Typically, these properties vary between, but not within, survey projects. For example, in the European Social Survey, questions about trust in institutions are accompanied by 11-point scales ranging from 0 (No trust at all) to 10 (Completely trust) (ESS (European Social Survey), \protect\hyperlink{ref-ESSEuropeanSocialSurvey2016b}{2016}).
+The third step is at the data file level, and refers to the coding of properties of the source variables that are worth preserving because of methodological reasons, such as the length or direction of the original response scales. Typically, these properties vary between, but not within, survey projects. For example, in the European Social Survey, questions about trust in institutions are accompanied by 11-point scales ranging from 0 (No trust at all) to 10 (Completely trust) (European Social Survey, \protect\hyperlink{ref-ESS2016b}{2016}).
 
 \hypertarget{illustration-trust-in-institutions}{%
 \section{Illustration: Trust in institutions}\label{illustration-trust-in-institutions}}
 
-The illustrative example deal with trust in institutions items and their basic correlates in three main cross-national survey projects in Europe: the European Social Survey, the European Values Study, and the European Quality of Life Survey. The data are available from the project website, the GESIS archive, and the UK Data Archive, respectively. Table \ref{tab:project-table} presents basic information about these survey projects.
+The illustrative example deals with trust in institutions items and their basic correlates in three main cross-national survey projects in Europe: the European Social Survey, the European Values Study, and the European Quality of Life Survey. The data are available from the project website (European Social Survey, \protect\hyperlink{ref-ESS2018}{2018}), the GESIS archive (European Values Study, \protect\hyperlink{ref-EVS2015}{2015}, \protect\hyperlink{ref-EVS2018}{2018}), and the UK Data Archive (European Quality of Life Survey, \protect\hyperlink{ref-EQLS2018}{2018}), respectively. All three projects conduct surveys in many European countries in each project wave, with samples intended as representative for entire adult populations of the respective country. Table \ref{tab:project-table} presents basic information about these survey projects. Standardized documentation about the methodology employed in all projects has been put together by Piotr Jabkowski (\protect\hyperlink{ref-Jabkowski2018}{2018}).
 
 Trust in political and other institutions is a common item in many cross-national surveys, and appears in all waves of all three projects. Each project includes questions about trust in a different set of institutions. Further, while in all three projects questionnaires tend to be relatively stable from wave to wave, the sets of questions have seen some changes, in particular new items added, and not always a given item was asked in all countries in a given wave. Finally, in each project the design of the trust items is slightly different. Major differences include the length and direction of the response scale, while other differences - response scale polarity or details of the question wording - seem to be of lesser importance for the distribution of the answers (Kołczyńska \& Slomczynski, \protect\hyperlink{ref-KolczynskaSlomczynski2018}{2018}).
 
 For researchers interested in analyzing trust in a comparative perspective, it is important to know which projects include which trust items in which waves and countries, i.e., how rich a dataset they can count on. Like in all situations where the availability of variables for analysis is not clear from the start, this is an exploratory situation.
 
-\begin{table}[t]
+\begin{table}[!h]
 
 \caption{\label{tab:project-table}Description of the survey projects.}
 \fontsize{11}{13}\selectfont
@@ -425,7 +424,13 @@ To map source variables to target variable names, a list of source variables in 
 
 The codebook can be generated from labelled datasets, such as those created in SPSS. In R, such a codebook can be created with the package \texttt{labelled} (Larmarange, \protect\hyperlink{ref-labelled}{2019}). The R code for creating the codebook is presented in \protect\hyperlink{appendix1}{Appendix 1}.
 
-The codebook is the exported into a spreadsheet program, where variable labels can be browsed and filtered to select the source variables of interest, and assign appropriate target variable names. The target variable names will be \texttt{t\_trust\_*}, where \texttt{*} is the short version of the institution name, and the prefix \texttt{t\_} identifies the target variable.
+The codebook is the exported into a spreadsheet program (e.g., with the \texttt{rio} package (Chan, Chan, Leeper, \& Becker, \protect\hyperlink{ref-rio}{2018})), where variable labels can be browsed and filtered to select the source variables of interest, and assign appropriate target variable names. The target variable names will be \texttt{t\_trust\_*}, where \texttt{*} is the short version of the institution name, and the prefix \texttt{t\_} identifies the target variable. If necessary, notes or comments on particular decisions can be written in a separate column(s). Notes may document decisions to treat questions about slightly different wording as corresponding to the same target variable (e.g., trust in the justice system vs.~trust in the legal system), or add information from other sources, such as the original documentation of the source data.
+
+Figure \ref{fig:codebook} shows a snippet of the codebook created for ESS, EVS, and EQLS. The first column (\texttt{t\_table\_name}) corresponds to the name of the source table - one each for ESS and EQLS, and two separate tables for EVS/5 and EVS/1-4. The column \texttt{varname} contains the names of source variables, \texttt{varlabel} contains the variable labels, and \texttt{valfreqs} contains frequencies of all values with value labels provided. The column \texttt{target\_var} is to be filled with names of target variables to which the selected source variables correspond. In the example shown in Figure \ref{fig:codebook}, the label \texttt{t\_trust\_parl} has been assigned to the variable on trust in parliament, the label \texttt{t\_trust\_leg} to the variable on trust in the legal system, and so on. Filtering available in spreadsheet programs enables sorting through variables with keywords.
+
+\begin{figure}
+\includegraphics[width=465px]{pictures/codebook_full} \caption{Codebook table.}\label{fig:codebook}
+\end{figure}
 
 \hypertarget{step-2-mapping-source-values-to-target-values}{%
 \subsection{Step 2: Mapping source values to target values}\label{step-2-mapping-source-values-to-target-values}}
@@ -436,12 +441,18 @@ This manual mapping of source values to target values, while mundane, achieves t
 
 The second goal is a careful inspection of full labels of the source values, one by one, while consulting the textual survey documentation where necessary. The need to assign each source value a corresponding target value again protests from some mistakes of automation, and is particularly useful in the case of categorical variables with limited standardization across waves and projects, such as education or size of town of residence.
 
+The snippet in Figure \ref{fig:cwt} shows a fragment of the crosswalk for trust in the police in EVS/Round 5, for which the source variable is called \texttt{v120}, and realized values include negative codes for different types of missing data, and values from 1 to 4 corresponding to substantive answers. Corresponding target values would be added in the \texttt{target\_value} column.
+
+\begin{figure}
+\includegraphics[width=465px]{pictures/cwt_empty} \caption{Crosswalk table.}\label{fig:cwt}
+\end{figure}
+
 Once the value crosswalk table is ready, it is imported into R, and - for each source variable separately - source and target values are extracted as vectors and used in mapping. The function \texttt{mapvalues} from the \texttt{plyr} package (Wickham, \protect\hyperlink{ref-Wickham2011}{2011}), which maps each value from the source variable vector onto a corresponding value from the target variable vectors, is particularly useful in this regard.
 
 \hypertarget{step-3-recording-characteristics-of-source-items}{%
 \subsection{Step 3: Recording characteristics of source items}\label{step-3-recording-characteristics-of-source-items}}
 
-Cross-national surveys differ in almost all impaginable aspects related to the methodology of the survey process, starting from questionnaire development and pretesting, through fieldwork procedures and response or realization rates, the design of individual survey items (Kołczyńska \& Slomczynski, \protect\hyperlink{ref-KolczynskaSlomczynski2018}{2018}), to the quality of documentation (Jabkowski \& Kołczyńska, \protect\hyperlink{ref-Jabkowski2019}{2019}; Marta Kołczyńska \& Schoene, \protect\hyperlink{ref-KolczynskaSchoene2018}{2018}). According to the literature on survey methodology, in particular in the Total Survey Error paradign, the comparability of surveys is reduced whenever the amounts of random and systematic error are different across surveys (Smith, \protect\hyperlink{ref-Smith2018}{2018}). The TSE framework currently counts 35 different sources of error, so the potential for deviations is large.
+Cross-national surveys differ in almost all impaginable aspects related to the methodology of the survey process, starting from questionnaire development and pretesting, through fieldwork procedures and response or realization rates, the design of individual survey items (Kołczyńska \& Slomczynski, \protect\hyperlink{ref-KolczynskaSlomczynski2018}{2018}), to the quality of documentation (Jabkowski \& Kołczyńska, \protect\hyperlink{ref-Jabkowski2019}{2019}; Kołczyńska \& Schoene, \protect\hyperlink{ref-KolczynskaSchoene2018}{2018}). According to the literature on survey methodology, in particular in the Total Survey Error paradign, the comparability of surveys is reduced whenever the amounts of random and systematic error are different across surveys (Smith, \protect\hyperlink{ref-Smith2018}{2018}). The TSE framework currently counts 35 different sources of error, so the potential for deviations is large.
 
 This is why, while the amount and type (random or systematic) of each type of error in surveys is unknown (and for the most part unknowlable), one approach to dealing with the methodological variation of surveys comprising a single harmonized dataset is to construct additional variables that capture selected properties of the source data or documentation in form of control variables. It is not clear whether including these control variables in substantive analyses improves model estimates or not, and under which cirsumstances, but such methodological controls can at least be used in data exploration.
 
@@ -449,15 +460,53 @@ In the case of questions about trust in institutions, the most easily identifiab
 
 Item and other methodological properties can be recorded in a separate table, where the national survey (project*wave*country) is the unit of observation.
 
+\hypertarget{results-comparing-average-levels-of-trust-in-the-police}{%
+\subsection{Results: Comparing average levels of trust in the police}\label{results-comparing-average-levels-of-trust-in-the-police}}
+
+\begin{figure}
+\centering
+\includegraphics{Harmonization_working_paper_files/figure-latex/graph-1.pdf}
+\caption{\label{fig:graph}Country-year levels of trust in the police by aggregate type.}
+\end{figure}
+
 \hypertarget{limitations}{%
 \section{Limitations}\label{limitations}}
 
-The presented approach naturally has some limitations. Some of them are inherent to the main tool used - the crosswalk. If the source and target schemas do not map into each other very well, the need for the aforementioned ``intelligent flexibility'' (Hillmann \& Westbrooks, \protect\hyperlink{ref-Hillmann2004}{2004}, p. 91) arises. At the same time, crosswalks enable mapping from a single scheme onto another single scheme. Some researchers might want to construct the target variable on the basis of two or more source variables. For example, the target variable ``membership in organizations'' could be constructed on the basis of two target variables corresponding to membership in political organizations and membership in non-political organizations.
+The presented approach naturally has some limitations. Some of them are inherent to the main tool used - the crosswalk. If the source and target schemas do not map onto each other very well, the need for the aforementioned ``intelligent flexibility'' (Hillmann \& Westbrooks, \protect\hyperlink{ref-Hillmann2004}{2004}, p. 91) arises. At the same time, crosswalks enable mapping from a single scheme onto another single scheme. Some researchers might want to construct the target variable on the basis of two or more source variables. For example, the target variable ``membership in organizations'' could be constructed on the basis of two target variables corresponding to membership in political organizations and membership in non-political organizations. Cases when two (or more) variables need to be combined into one target variable can be handled easily in the code, with the identification of missing values and perhaps preliminary recoding in the crosswalk.
+
+Another limitation deals with ex-post survey data harmonization in general. Each time a transformation of the source variable(s) is performed, the costs and benefits need to be considered. Since at least the 1940s it has been known that the design of the survey items influences the distribution of respodents' answers, and - consequently - of sample aggregates, such as means or proportions (Cantril, \protect\hyperlink{ref-Cantril1944}{1944}). In the case of items that are designed as a scale to measure a latent trait, selecting some items of the scale, or changing their coding, may undermine the validity of the scale (Mustillo, Lizardo, \& McVeigh, \protect\hyperlink{ref-Mustillo2018}{2018}).
+
+While the literature on question and questionnaire design effects is rich and constantly growing, recommendations are typically formulated with regard to best practices in future data collection efforts, not from the point of view of procedures that improve the comparability of already collected data.
+
+\hypertarget{recommendations}{%
+\section{Recommendations}\label{recommendations}}
+
+An absolute minimum for reproducibility of any secondary analysis or processing of survey data is the information about:\\
+1. The origin of the data files, their format, version, and information about how to obtain them,
+2. Original data files (unless not possible due to legal or ethical restrictions),
+3. Original data documentation, with their version and origin recorded,
+4. Recoding syntax in a recognized language,
+5. Instructions describing the procedures.
+
+It is possible that this ``minimum package'' will actually enable the reproduction of all procedures, but it is likely that it will not. The potential reasons are many, ranging from insufficient competence in the given programming language, to errors in the code, ambiguous instructions, lack of documentation, differences in the software or hardware environment. Some problems with reproducing analyses in a relatively favorable situation with good will and communication from both sides are described by Liu and Salganik (\protect\hyperlink{ref-Liu2019}{2019}). Creating reproducible documentation is hard, because missing even one of the necessary steps or components leads to the failure of the whole process.
+
+There are several ways of improving data processing reproducibility. The first one is automating all automatable data processing steps, including importing the data, cleaning, processing, and exporting. The code should be annotated. Following Liu \& Salganik (\protect\hyperlink{ref-Liu2019}{2019}), code documents should include information about the general purpose of the code segment, as well as a description of the input, the outputs, the type of machine used, and the expected runtime.
+
+All steps of manual processing should be documented, ideally in machine-readable form, with document versioning and visible corrections. The latter point is important to recostruct the decision changes, and in tracking down errors.
+
+Chances for successful data processing reproduciblity increase if the software environement is documented, i.e.~versions of all software and packages or libraries that were used in data processing.
+
+Reproduciblity of data processing work in the long term benefits from the human-friendliness and universal format of the documentation files. In this case simpler is better, and chances are that text files will be usable ``forever'', which is not necessary true for SPSS syntax files. Hence, data processing syntax in other forms than just code - such as crosswalks - has a potential to be accessible more widely and for longer.
+
+In the recent years there has been increasing awareness of the value and challenges of repricability and reproduciblity, both among researchers and educators.
+Reith, Paxton, and Hughes (\protect\hyperlink{ref-Reith2016}{2016}) offer recommendations for creating cross-national, logitudinal datasets, many of which also apply to harmonizing survey data. Project TIER (Teaching Integrity in Empirical Research) developed the DRESS protocol - a set of guidelines for documenting empirical research (Project TIER, \protect\hyperlink{ref-ProjectTIER2016}{2016}). Liu and Salganik (\protect\hyperlink{ref-Liu2019}{2019}) describe their experiences with verifying computational reproducibility of papers stemming from the Fragile Families Challenge.
+
+\clearpage
 
 \hypertarget{appendices}{%
 \section{Appendices}\label{appendices}}
 
-Functions to construct the codebook and values crosswalk, as well as the surveys list, are in Appendix \protect\hyperlink{appendix1}{1}, \protect\hyperlink{appendix2}{2}, and \protect\hyperlink{appendix3}{3}, respectively. The functions rely on the packages \texttt{haven} (Wickham \& Miller, \protect\hyperlink{ref-haven}{2019}) for inporting the data into R, \texttt{labelled} (Larmarange, \protect\hyperlink{ref-labelled}{2019}) for dealing with labels, and the \texttt{tidyverse} (Wickham, \protect\hyperlink{ref-tidyverse}{2017}) suite for data wrangling.
+Functions to construct the codebook and values crosswalk, as well as the surveys list, are in Appendix \protect\hyperlink{appendix1}{1}, \protect\hyperlink{appendix2}{2}, and \protect\hyperlink{appendix3}{3}, respectively. The functions rely on the R language (R Core Team, \protect\hyperlink{ref-baser}{2018}), in particular the packages \texttt{haven} for importing the data into R (Wickham \& Miller, \protect\hyperlink{ref-haven}{2019}), \texttt{labelled} for dealing with labels (Larmarange, \protect\hyperlink{ref-labelled}{2019}), and the \texttt{tidyverse} suite for data wrangling (Wickham, \protect\hyperlink{ref-tidyverse}{2017}).
 
 \hypertarget{appendix1}{%
 \subsection{Appendix 1: Codebook from labelled data in R}\label{appendix1}}
@@ -466,14 +515,9 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(tidyverse)}
-\KeywordTok{library}\NormalTok{(haven)}
-\KeywordTok{library}\NormalTok{(labelled)}
-
 \NormalTok{create_codebook <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(data) \{}
 \NormalTok{  var_labels <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(}\KeywordTok{names}\NormalTok{(}\KeywordTok{var_label}\NormalTok{(data)), }\KeywordTok{do.call}\NormalTok{(rbind, }\KeywordTok{var_label}\NormalTok{(data)))) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{rename}\NormalTok{(}\DataTypeTok{varname =}\NormalTok{ X1, }\DataTypeTok{varlabel =}\NormalTok{ X2)}
-  
 \NormalTok{  freqs <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(data, }\ControlFlowTok{function}\NormalTok{(x) \{ }\KeywordTok{return}\NormalTok{(questionr}\OperatorTok{::}\KeywordTok{freq}\NormalTok{(x)) \}) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{keep}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{nrow}\NormalTok{(x) }\OperatorTok{<}\StringTok{ }\DecValTok{1000}\NormalTok{) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{do.call}\NormalTok{(rbind, .) }\OperatorTok{%>%}\StringTok{ }
@@ -488,7 +532,6 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 \StringTok{    }\KeywordTok{mutate_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\OperatorTok{-}\NormalTok{varname), }\KeywordTok{funs}\NormalTok{(}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(.), }\StringTok{""}\NormalTok{, .))) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{unite}\NormalTok{(}\StringTok{"valfreqs"}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\DecValTok{2}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(.)), }\DataTypeTok{sep =} \StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{valfreqs =} \KeywordTok{sub}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{s+$"}\NormalTok{, }\StringTok{""}\NormalTok{, valfreqs))}
-  
   \KeywordTok{full_join}\NormalTok{(var_labels, freqs, }\DataTypeTok{by =} \StringTok{"varname"}\NormalTok{)}
 \NormalTok{\}}
 \end{Highlighting}
@@ -506,7 +549,6 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 \NormalTok{create_cwt <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(data) \{}
 \NormalTok{  var_labels <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(}\KeywordTok{names}\NormalTok{(}\KeywordTok{var_label}\NormalTok{(data)), }\KeywordTok{do.call}\NormalTok{(rbind, }\KeywordTok{var_label}\NormalTok{(data)))) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{rename}\NormalTok{(}\DataTypeTok{varname =}\NormalTok{ X1, }\DataTypeTok{varlabel =}\NormalTok{ X2)}
-  
 \NormalTok{  freqs_cwt <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(data, }\ControlFlowTok{function}\NormalTok{(x) \{ }\KeywordTok{return}\NormalTok{(questionr}\OperatorTok{::}\KeywordTok{freq}\NormalTok{(x)) \}) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{keep}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{nrow}\NormalTok{(x) }\OperatorTok{<}\StringTok{ }\DecValTok{1000}\NormalTok{) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{do.call}\NormalTok{(rbind, .) }\OperatorTok{%>%}\StringTok{ }
@@ -521,7 +563,6 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 \StringTok{    }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{npos =} \KeywordTok{row_number}\NormalTok{(),}
            \DataTypeTok{value_n =} \KeywordTok{paste}\NormalTok{(value, n, }\DataTypeTok{sep =} \StringTok{": "}\NormalTok{)) }\OperatorTok{%>%}
 \StringTok{    }\KeywordTok{select}\NormalTok{(npos, varname, value_n, value, value_code)}
-  
   \KeywordTok{full_join}\NormalTok{(var_labels, freqs_cwt, }\DataTypeTok{by =} \StringTok{"varname"}\NormalTok{)}
 \NormalTok{\}}
 \end{Highlighting}
@@ -543,16 +584,12 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 \CommentTok{# t_year for the survey year.}
 
 \NormalTok{create_surveys_list <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(data_frame_vector) \{}
-  
 \NormalTok{  surveys_list <-}\StringTok{ }\KeywordTok{list}\NormalTok{()}
-  
   \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(data_frame_vector)) \{}
-    
 \NormalTok{    surveys_list[[i]] <-}\StringTok{ }\KeywordTok{eval}\NormalTok{(}\KeywordTok{parse}\NormalTok{(}\DataTypeTok{text =}\NormalTok{ data_frame_vector[i])) }\OperatorTok{%>%}
 \StringTok{      }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{t_survey =} \KeywordTok{paste}\NormalTok{(t_project, t_round, t_country, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }\OperatorTok{%>%}
 \StringTok{      }\KeywordTok{count}\NormalTok{(t_survey, t_year)}
 \NormalTok{  \}}
-  
   \KeywordTok{do.call}\NormalTok{(rbind, surveys_list)}
 \NormalTok{\}}
 \end{Highlighting}
@@ -564,9 +601,9 @@ Functions to construct the codebook and values crosswalk, as well as the surveys
 \section{References}\label{references}}
 
 \renewcommand{\baselinestretch}{1}\normalsize
-
-\parindent -0in
+\parindent 0in
 \leftskip 0.2in
+
 \parindent -0.2in
 
 \hypertarget{refs}{}
@@ -579,6 +616,12 @@ Buckheit, J. B., \& Donoho, D. L. (1995). WaveLab and Reproducible Research. In 
 \leavevmode\hypertarget{ref-Burkhauser2005}{}%
 Burkhauser, R. V., \& Lillard, D. R. (2005). The contribution and potential of data harmonization for cross-national comparative research. \emph{Journal of Comparative Policy Analysis: Research and Practice}, \emph{7}(4), 313--330. \url{https://doi.org/10.1080/13876980500319436}
 
+\leavevmode\hypertarget{ref-Cantril1944}{}%
+Cantril, H. (1944). \emph{Gauging Public Opinion}. Princeton, NJ: Princeton University Press.
+
+\leavevmode\hypertarget{ref-rio}{}%
+Chan, C.-h., Chan, G. C. H., Leeper, T. J., \& Becker, J. (2018). \emph{rio: A Swiss-army knife for data file I/O}.
+
 \leavevmode\hypertarget{ref-Christmann2018}{}%
 Christmann, P. (2018). Economic performance, quality of democracy and satisfaction with democracy. \emph{Electoral Studies}, \emph{53}(April 2017), 79--89. \url{https://doi.org/10.1016/j.electstud.2018.04.004}
 
@@ -588,8 +631,20 @@ Christmann, P., \& Torcal, M. (2018). The Effects of Government System Fractiona
 \leavevmode\hypertarget{ref-Curran2009}{}%
 Curran, P. J., \& Hussong, A. M. (2009). Integrative Data Analysis: The Simultaneous Analysis of Multiple Data Sets. \emph{Psychological Methods}, \emph{14}(2), 81--100. \url{https://doi.org/10.1037/a0015914}
 
-\leavevmode\hypertarget{ref-ESSEuropeanSocialSurvey2016b}{}%
-ESS (European Social Survey). (2016). ESS Round 8 Source Questionnaire. London: ESS ERIC Headquarters c/o City University London.
+\leavevmode\hypertarget{ref-EQLS2018}{}%
+European Quality of Life Survey. (2018). European Quality of Life Survey Integrated Data File, 2003-2016. European Foundation for the Improvement of Living; Working Conditions. UK Data Service. \url{https://doi.org/10.5255/UKDA-SN-7348-3}
+
+\leavevmode\hypertarget{ref-ESS2016b}{}%
+European Social Survey. (2016). ESS Round 8 Source Questionnaire. London: ESS ERIC Headquarters c/o City University London.
+
+\leavevmode\hypertarget{ref-ESS2018}{}%
+European Social Survey. (2018). European Social Survey Cumulative File, ESS 1-8 (2018). NSD - Norwegian Centre for Research Data, Norway - Data Archive; distributor of ESS data for ESS ERIC. \url{https://doi.org/10.21338/NSD-ESS-CUMULATIVE}
+
+\leavevmode\hypertarget{ref-EVS2015}{}%
+European Values Study. (2015). European Values Study Longitudinal Data File 1981-2008 (EVS 1981-2008). Cologne: GESIS Data Archive. \url{https://doi.org/10.4232/1.12253}
+
+\leavevmode\hypertarget{ref-EVS2018}{}%
+European Values Study. (2018). European Values Study 2017: Integrated Dataset (EVS 2017). Cologne: GESIS Data Archive. \url{https://doi.org/10.4232/1.13090}
 
 \leavevmode\hypertarget{ref-Fortier2017a}{}%
 Fortier, I., Raina, P., Van den Heuvel, E. R., Griffith, L. E., Craig, C., Saliba, M., \ldots{} Burton, P. (2017). Maelstrom Research guidelines for rigorous retrospective data harmonization. \emph{International Journal of Epidemiology}, \emph{46}(1), 103--115. \url{https://doi.org/10.1093/ije/dyw075}
@@ -600,6 +655,9 @@ Granda, P., \& Blasczyk, E. (2016). Data Harmonization. In \emph{Guidelines for 
 \leavevmode\hypertarget{ref-Hillmann2004}{}%
 Hillmann, D. I., \& Westbrooks, E. L. (2004). \emph{Metadata in Practice} (p. 285). American Library Association.
 
+\leavevmode\hypertarget{ref-Jabkowski2018}{}%
+Jabkowski, P. (2018). \emph{Surveys Quality Assessment Database (SQAD)}. Retrieved from \url{https://www.researchgate.net/project/Surveys-Quality-Assessment-Database-SQAD}
+
 \leavevmode\hypertarget{ref-Jabkowski2019}{}%
 Jabkowski, P., \& Kołczyńska, M. (2019). Survey practices in Europe: Analysis of methodological documentation from 1537 surveys in five cross-national projects, 1981-2017. Unpublished draft.
 
@@ -608,6 +666,9 @@ Klassen, A. J. (2018). \emph{Human Understanding Measured Across National ( HUMA
 
 \leavevmode\hypertarget{ref-Kolczynska2019}{}%
 Kołczyńska, M. (2019). From Cross-national ex post Survey Harmonization to Substantive Analyses: A Roadmap and Empirical Illustration of Micro- and Macro-level Determinants of Protest Participation. Unpublished draft.
+
+\leavevmode\hypertarget{ref-KolczynskaSchoene2018}{}%
+Kołczyńska, M., \& Schoene, M. (2018). Survey Data Harmonization and the Quality of Data Documentation in Cross‐national Surveys. In T. P. Johnson, B.-E. Pennell, I. A. L. Stoop, \& B. Dorer (Eds.), \emph{Advances in comparative survey methods: Multinational, multiregional, and multicultural contexts (3MC)} (pp. 963--984). Wiley.
 
 \leavevmode\hypertarget{ref-KolczynskaSlomczynski2018}{}%
 Kołczyńska, M., \& Slomczynski, K. M. (2018). Item Metadata as Controls for Ex Post Harmonization of International Survey Projects. In T. P. Johnson, B.-E. Pennell, I. A. L. Stoop, \& B. Dorer (Eds.), \emph{Advances in comparative survey methods: Multinational, multiregional, and multicultural contexts (3MC)} (pp. 1011--1034). Wiley.
@@ -618,17 +679,29 @@ Larmarange, J. (2019). \emph{labelled: Manipulating Labelled Data}. Retrieved fr
 \leavevmode\hypertarget{ref-Liu2019}{}%
 Liu, D. M., \& Salganik, M. J. (2019). \emph{Successes and struggles with computational reproducibility: Lessons from the Fragile Families Challenge} (pp. 1--56). \url{https://doi.org/10.31235/osf.io/g3pdb}
 
-\leavevmode\hypertarget{ref-KolczynskaSchoene2018}{}%
-Marta Kołczyńska, \& Schoene, M. (2018). Survey Data Harmonization and the Quality of Data Documentation in Cross‐national Surveys. In T. P. Johnson, B.-E. Pennell, I. A. L. Stoop, \& B. Dorer (Eds.), \emph{Advances in comparative survey methods: Multinational, multiregional, and multicultural contexts (3MC)} (pp. 963--984). Wiley.
-
 \leavevmode\hypertarget{ref-Mauk2019}{}%
 Mauk, M. (2019). Disentangling an Elusive Relationship: How Democratic Value Orientations Affect Political Trust in Different Regimes. \emph{Political Research Quarterly}. \url{https://doi.org/10.1177/1065912919829832}
+
+\leavevmode\hypertarget{ref-Mustillo2018}{}%
+Mustillo, S. A., Lizardo, O. A., \& McVeigh, R. M. (2018). Editors' Comment: A Few Guidelines for Quantitative Submissions. \emph{American Sociological Review}, \emph{83}(6), 1281--1283. \url{https://doi.org/10.1177/0003122418806282}
 
 \leavevmode\hypertarget{ref-Powako2016}{}%
 Powałko, P., \& Kołczyńska, M. (2016). Working with Data in the Cross-National Survey Harmonization Project: Outline of Programming Decisions. \emph{International Journal of Sociology}, \emph{46}(1), 73--80. \url{https://doi.org/10.1080/00207659.2016.1130433}
 
+\leavevmode\hypertarget{ref-ProjectTIER2016}{}%
+Project TIER. (2016). \emph{The DRESS Protocol: Documenting Research in the Empirical Social Sciences}. Teaching Integrity in Empirical Research (TIER). Retrieved from \url{https://www.projecttier.org/tier-protocol/dress-protocol/}
+
+\leavevmode\hypertarget{ref-baser}{}%
+R Core Team. (2018). \emph{R: A Language and Environment for Statistical Computing}. Vienna, Austria: R Foundation for Statistical Computing. Retrieved from \url{https://www.r-project.org/}
+
+\leavevmode\hypertarget{ref-Reith2016}{}%
+Reith, N. E., Paxton, P., \& Hughes, M. M. (2016). Building Cross-National, Longitudinal Data Sets: Issues and Strategies for Implementation. \emph{International Journal of Sociology}, \emph{46}(1), 21--41. \url{https://doi.org/10.1080/00207659.2016.1130416}
+
 \leavevmode\hypertarget{ref-Sandberg2018}{}%
 Sandberg, B., \& Bekkers, R. (2018). \emph{Harmonized Trust Database Codebook, Version 1.3}. Global Trust Research Consortium. Retrieved from \url{https://osf.io/92r5z/}
+
+\leavevmode\hypertarget{ref-Slomczynskietal2017}{}%
+Slomczynski, K. M., Jenkins, J. C., Tomescu-Dubrow, I., Kołczyńska, M., Wysmułek, I., Oleksiyenko, O., \ldots{} Zieliński, M. W. (2017). SDR Master Box. Retrieved from \url{https://doi.org/10.7910/DVN/VWGF5Q}
 
 \leavevmode\hypertarget{ref-Slomczynski2018}{}%
 Slomczynski, K. M., \& Tomescu-Dubrow, I. (2018). Basic Principles of Survey Data Recycling. In T. P. Johnson, B.-E. Pennell, I. A. L. Stoop, \& B. Dorer (Eds.), \emph{Advances in comparative survey methods: Multinational, multiregional, and multicultural contexts (3MC)} (pp. 937--962). Wiley. \url{https://doi.org/10.1002/9781118884997.ch43}
@@ -647,6 +720,9 @@ Wickham, H. (2017). \emph{tidyverse: Easily Install and Load the 'Tidyverse'}. R
 
 \leavevmode\hypertarget{ref-haven}{}%
 Wickham, H., \& Miller, E. (2019). \emph{haven: Import and Export 'SPSS', 'Stata' and 'SAS' Files}. Retrieved from \url{https://cran.r-project.org/package=haven}
+
+\leavevmode\hypertarget{ref-Winters2016}{}%
+Winters, K., \& Netscher, S. (2016). Proposed Standards for Variable Harmonization Documentation and Referencing: A Case Study Using QuickCharmStats 1.1. \emph{PLoS ONE}, \emph{11}(2), 1--15. \url{https://doi.org/10.1371/journal.pone.0147795}
 
 \leavevmode\hypertarget{ref-Wolf2016}{}%
 Wolf, C., Schneider, S. L., Behr, D., \& Joye, D. (2016). Harmonizing Survey Questions Between Cultures and Over Time. In \emph{The sage handbook of survey methodology} (pp. 502--524). SAGE. \url{https://doi.org/10.4135/9781473957893}

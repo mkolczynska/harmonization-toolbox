@@ -1,15 +1,19 @@
+# Packages ----------------
+
 library(tidyverse)
 library(haven)
 library(labelled)
 library(countrycode)
-library(vtable)
-
-vtable(evs_1981_2008_h)
 
 ###
 sessionInfo()
 
 ### opening the data and creating basic technical variables -----------
+
+# EVS 2017 (ZA7500_v1-0-0.sav.zip): https://dbk.gesis.org/dbksearch/GDESC2.asp?no=0009&DB=E
+# EVS 1981-2008 (ZA4804_v3-0-0.sav.zip): https://dbk.gesis.org/dbksearch/GDESC2.asp?no=0009&DB=E
+# ESS 1-8 (ESS1-8e01.zip): https://www.europeansocialsurvey.org/downloadwizard/
+# EQLS (eqls_integrated_trend_2003-2016.sav): https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=7348
 
 basic_vars <- c("t_country", "s_id", "t_id", "t_weight", "t_round", "t_table_name", "t_year")
 
@@ -97,16 +101,18 @@ create_surveys_list <- function(data_frame_vector) {
   for (i in 1:length(data_frame_vector)) {
     
     surveys_list[[i]] <- eval(parse(text = data_frame_vector[i])) %>%
+      select(t_project, t_round, t_country, t_year) %>%
+      zap_labels() %>%
+      zap_label() %>%
       mutate(t_survey = paste(t_project, t_round, t_country, sep = "")) %>%
-      count(t_survey, t_year)
+      count(t_survey, t_project, t_round, t_country, t_year)
   }
-  
   do.call(rbind, surveys_list)
 }
 
 
 lists <- create_surveys_list(c("eqls_1_4", "evs_2017", "evs_1981_2008", "ess_1_8"))
-
+rio::export(lists, "surveys_list.xlsx")
 
 
 ### creating codebooks ----------------------
@@ -273,6 +279,8 @@ all_data <- bind_rows(evs_2017_h, evs_1981_2008_h,
   mutate(t_project = sub("\\_.*", "", t_table_name))
 
 rio::export(all_data, "all_data.csv")
+all_data <- rio::import("data/all_data.csv")
+
 
 a <- all_data %>%
   group_by(t_project, t_country, t_year) %>%
@@ -355,31 +363,83 @@ gridExtra::grid.arrange(plot1, plot2, plot3, nrow = 1)
 ggarrange(plot1, plot2, plot3, nrow = 1, ncol = 3, common.legend = TRUE, legend="bottom") %>%
   annotate_figure(., top = text_grob("Mean trust in parliament", color = "black", face = "bold", size = 12))
 
+### weighted var ----
 
+devtools::install_github("hadley/bigvis")
+## https://github.com/hadley/bigvis/blob/master/R/weighted-stats.r
+
+weighted.var <- function(x, w = NULL, na.rm = FALSE) {
+  if (na.rm) {
+    na <- is.na(x) | is.na(w)
+    x <- x[!na]
+    w <- w[!na]
+  }
+  
+  sum(w * (x - weighted.mean(x, w)) ^ 2) / (sum(w) - 1)
+}
+
+weighted.sd <- function(x, w, na.rm = TRUE) sqrt(weighted.var(x, w, na.rm = TRUE))
+
+###
+
+library(reshape2)
+
+dodge <- position_dodge(width=0.5)
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 
 all_data %>%
+  filter(!is.na(t_trust_police)) %>%
   group_by(t_project, t_country, t_year) %>%
-  summarise(`Proportion > 5` = weighted.mean(ifelse(t_trust_police > 5, 1, 0)*10, 
-                                       w = t_weight, na.rm = TRUE),
-            `Proportion >= 5` = weighted.mean(ifelse(t_trust_police >= 5, 1, 0)*10, 
-                                       w = t_weight, na.rm = TRUE),
-            `Mean (0-10)` = weighted.mean(t_trust_police, w = t_weight, na.rm = TRUE)) %>%
-  gather(variable, value, 4:6) %>%
-  filter(!is.na(value)) %>%
-  group_by(t_country, t_year, variable) %>%
+  mutate(prop1 = ifelse(t_trust_police > 5, 1, 0),
+         prop2 = ifelse(t_trust_police >= 5, 1, 0)) %>%
+  summarise(nobs = sum(t_weight),
+            me_prop1 = weighted.mean(prop1, w = t_weight, na.rm = TRUE)*10,
+            me_prop2 = weighted.mean(prop2, w = t_weight, na.rm = TRUE)*10,
+            me_mean = weighted.mean(t_trust_police, w = t_weight, na.rm = TRUE),
+            se_prop1 = sqrt(weighted.mean(prop1, t_weight, na.rm = TRUE) * 
+                                   (1 - weighted.mean(prop1, t_weight, na.rm = TRUE))/
+                                   n())*10,
+            se_prop2 = sqrt(weighted.mean(prop2, t_weight, na.rm = TRUE) * 
+                              (1 - weighted.mean(prop1, t_weight, na.rm = TRUE))/
+                              n())*10,
+            se_mean = weighted.sd(t_trust_police, w = t_weight, na.rm = TRUE)/sqrt(nobs)) %>%
+  gather(variable, value, 5:10) %>%
+  mutate(stat = substr(variable, 1, 2),
+         type = substr(variable, 4, 8)) %>%
+  select(-variable) %>%
+  spread(stat, value) %>%
+  filter(!is.na(me)) %>%
+  mutate(type = plyr::mapvalues(type, c("prop1", "prop2", "mean"),
+                                c("Proportion > 5", "Proportion >= 5",
+                                  "Mean (0-10)"))) %>%
+  group_by(t_country, t_year, type) %>%
   mutate(counts = n()) %>%
   filter(counts > 1) %>%
-  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), y = value)) +
-  geom_line(aes(group = paste(t_country, t_year))) +
-  geom_point(aes(col = t_project), size = 2) +
-  xlab("") + ylab("Aggregate country-year level") +
-  coord_flip() +
-  theme_minimal() +
-  guides(color=guide_legend(title="Project")) +
-  ggtitle("Country-year levels of trust in the police by aggregate type") +
-  labs(caption = "Data souce: ESS 1-8, EQLS 1-4, EVS 1-5.
-       Proportions (second and third facet) multiplied by 10 for comparability.") +
-  facet_wrap("variable")
+  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), 
+                y = me, col = t_project)) +
+    #geom_line(aes(group = paste(t_country, t_year))) +
+    #geom_point(size = 2) +
+    geom_pointrange(aes(ymin = me - 1.96*se, 
+                        ymax = me + 1.96*se),
+                    size = 0.5, alpha = 0.7) +
+    xlab("") + ylab("Aggregate country-year level") +
+    coord_flip() +
+    theme_minimal() +
+    scale_color_manual(name = "Project",
+                     values = cbPalette[1:3]) +
+    ggtitle("Country-year levels of trust in the police by aggregate type") +
+    labs(caption = "Data souce: ESS 1-8, EQLS 1-4, EVS 1-5.
+         Proportions (second and third facet) multiplied by 10 for comparability.") +
+    facet_wrap("type")
   
   
+all_data %>%
+  filter(t_country == "PL") %>%
+  group_by(t_project, t_year) %>%
+  summarise(mean = weighted.mean(t_trust_police, w = t_weight, na.rm = TRUE)) %>%
+  filter(!is.na(mean)) %>%
+  ggplot(., aes(x = t_year, y = mean, group = t_project, col = t_project)) +
+  geom_line(size = 1) +
+  expand_limits(y = 0) +
+  theme_bw()
