@@ -97,7 +97,6 @@ evs_1981_2008 <- lapply(evs_1981_2008, Int2Factor) %>% as.data.frame(., stringsA
 
 ### list of surveys ----------------------
 
-
 create_surveys_list <- function(data_frame_vector) {
   
   surveys_list <- list()
@@ -116,7 +115,7 @@ create_surveys_list <- function(data_frame_vector) {
 
 
 lists <- create_surveys_list(c("eqls_1_4", "evs_2017", "evs_1981_2008", "ess_1_8"))
-rio::export(lists, "surveys_list.xlsx")
+rio::export(lists, "templates/surveys_list.xlsx")
 
 
 ### creating codebooks ----------------------
@@ -190,13 +189,16 @@ create_cwt <- function(data) {
   
 }
 
-
 codebook_all1 <- rio::import("templates/codebook_all1.xlsx") %>%
   filter(!is.na(target_var))
 
 
+### label target variables -------------
+
 rio::export(unique(codebook_all1$target_var), "templates/var_names_labels.xlsx")
 
+
+### create CWT from several tables -----------------
 
 data_tables <- c("EVS_2017", "EVS_1981_2008", "EQLS_1_4", "ESS_1_8")
 cwt_all <- list()
@@ -268,7 +270,7 @@ harmonize <- function(table_name_input, cwt_name_input) {
 }
 
 evs_2017_h <- harmonize("EVS_2017", "cwt_all1")
-rm(evs_2017)
+rm(evs_2017) # remove original data files
 evs_1981_2008_h <- harmonize("EVS_1981_2008", "cwt_all1")
 rm(evs_1981_2008)
 ess_1_8_h <- harmonize("ESS_1_8", "cwt_all1")
@@ -277,25 +279,25 @@ eqls_1_4_h <- harmonize("EQLS_1_4", "cwt_all1")
 rm(eqls_1_4)
 
 
+### create single harmonized dataset ------------------
 
 all_data <- bind_rows(evs_2017_h, evs_1981_2008_h,
                       ess_1_8_h, eqls_1_4_h) %>%
   mutate(t_project = sub("\\_.*", "", t_table_name))
 
 rio::export(all_data, "data/all_data.csv")
-all_data <- rio::import("data/all_data.csv")
-
-names(all_data)
-
-list_surveys <- all_data %>%
-  count(t_project, t_round, t_country, t_year)
+write.csv(all_data, file=gzfile("data/all_data.csv.gz"))
+all_data <- rio::import("data/all_data.csv.gz")
 
 
-a <- all_data %>%
+
+### survey-year availability of trust items ---------------
+
+table_trust_survey <- all_data %>%
   group_by(t_project, t_round, t_country, t_year) %>%
-  summarise_at(vars(starts_with("t_trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
-  select(1:4, t_trust_socmedia)
+  summarise_at(vars(starts_with("t_trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE)))
 
+### list of trust items by survey -----------------
 
 list_surveys_trust <- all_data %>%
   group_by(t_project, t_round, t_country, t_year) %>%
@@ -304,25 +306,8 @@ list_surveys_trust <- all_data %>%
   ungroup() %>%
   full_join(rio::import("templates/var_names_labels.xlsx"))
 
-list_surveys %>% count(t_project, t_round)
 
-list_surveys_trust %>%
-  filter(variable == "t_trust_parl") %>%
-  count(t_project, t_round)
-
-list_surveys_trust %>% count(variable) %>% 
-  arrange(n) %>%
-  print(n = 30)
-
-list_surveys_trust %>% count(label) %>%
-  ggplot(., aes(x = reorder(label, n), y = n)) + 
-  geom_bar(stat="identity") +
-  theme_bw() +
-  xlab("") +
-  ylab("Number of surveys") +
-  coord_flip()
-
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+### plot: availability of turst items -----------------
 
 all_data %>%
   group_by(t_project, t_round, t_country, t_year) %>%
@@ -345,9 +330,9 @@ all_data %>%
 
 
 
+### country-year availability of trust in police -----------------
 
-
-d <- all_data %>%
+country_year_police <- all_data %>%
   group_by(t_country, t_year, t_project) %>%
   summarise(trust_police = mean(t_trust_police, na.rm = TRUE)) %>%
   filter(!is.na(trust_police)) %>%
@@ -362,86 +347,9 @@ d <- all_data %>%
 
 
 
-all_data_cntry <- all_data %>%
-  group_by(t_project, t_country, t_year) %>%
-  summarise_at(vars(starts_with("t_trust")), list(~weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
-  gather(variable, value, 4:31) %>%
-  filter(!is.na(value))
-
-plot1 <- all_data_cntry %>%
-  filter(variable == "t_trust_parl") %>%
-  group_by(t_country, t_year) %>%
-  mutate(nc = n()) %>%
-  filter(nc > 1) %>%
-  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), y = value)) +
-  geom_line(aes(group = paste(t_country, t_year))) +
-  geom_point(aes(col = t_project), size = 2) +
-  xlab("") + ylab("Mean trust in parliament") +
-  coord_flip() +
-  theme_minimal() +
-  guides(color=guide_legend(title="Project"))
-
-
-plot2 <- all_data %>%
-  group_by(t_project, t_country, t_year) %>%
-  summarise(trust_parl = weighted.mean(ifelse(t_trust_parl >= 5, 1, 0), 
-                                       w = t_weight, na.rm = TRUE)) %>%
-  group_by(t_country, t_year) %>%
-  mutate(nc = n()) %>%
-  filter(nc > 1) %>%
-  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), y = trust_parl)) +
-  geom_line(aes(group = paste(t_country, t_year))) +
-  geom_point(aes(col = t_project), size = 2) +
-  xlab("") + ylab("Proportion trusting in parliament (>= 5)") +
-  coord_flip() +
-  theme_minimal() +
-  guides(color=guide_legend(title="Project"))
-
-plot3 <- all_data %>%
-  group_by(t_project, t_country, t_year) %>%
-  summarise(trust_parl = weighted.mean(ifelse(t_trust_parl > 5, 1, 0), 
-                                       w = t_weight, na.rm = TRUE)) %>%
-  group_by(t_country, t_year) %>%
-  mutate(nc = n()) %>%
-  filter(nc > 1) %>%
-  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), y = trust_parl)) +
-  geom_line(aes(group = paste(t_country, t_year))) +
-  geom_point(aes(col = t_project), size = 2) +
-  xlab("") + ylab("Proportion trusting in parliament (> 5)") +
-  coord_flip() +
-  theme_minimal() +
-  guides(color=guide_legend(title="Project"))
-
-library(ggpubr)
-
-gridExtra::grid.arrange(plot1, plot2, plot3, nrow = 1)
-
-
-ggarrange(plot1, plot2, plot3, nrow = 1, ncol = 3, common.legend = TRUE, legend="bottom") %>%
-  annotate_figure(., top = text_grob("Mean trust in parliament", color = "black", face = "bold", size = 12))
-
-### weighted var ----
-
-devtools::install_github("hadley/bigvis")
-## https://github.com/hadley/bigvis/blob/master/R/weighted-stats.r
-
-weighted.var <- function(x, w = NULL, na.rm = FALSE) {
-  if (na.rm) {
-    na <- is.na(x) | is.na(w)
-    x <- x[!na]
-    w <- w[!na]
-  }
-  
-  sum(w * (x - weighted.mean(x, w)) ^ 2) / (sum(w) - 1)
-}
-
-weighted.sd <- function(x, w, na.rm = TRUE) sqrt(weighted.var(x, w, na.rm = TRUE))
-
-###
+### trust in police: comparison of aggregation (with CIs) ----------
 
 library(reshape2)
-
-## means trust police 1 ------------------------
 
 dodge <- position_dodge(width=0.5)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -492,7 +400,9 @@ all_data %>%
          Proportions (second and third facet) multiplied by 10 for comparability.") +
     facet_wrap("type")
   
-## means trust police 2 ----------------
+
+
+### trust in police: comparison of aggregation ----------
 
 all_data %>%
   group_by(t_project, t_country, t_year) %>%
@@ -520,7 +430,7 @@ all_data %>%
   facet_wrap("variable")
 
 
-### ---------------
+### trust in police: Poland -------------
 
 all_data %>%
   filter(t_country == "PL") %>%
