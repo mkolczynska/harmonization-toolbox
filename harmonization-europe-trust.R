@@ -15,9 +15,13 @@ sessionInfo()
 # ESS 1-8 (ESS1-8e01.zip): https://www.europeansocialsurvey.org/downloadwizard/
 # EQLS (eqls_integrated_trend_2003-2016.sav): https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=7348
 
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+
+
 basic_vars <- c("t_country", "s_id", "t_id", "t_weight", "t_round", "t_table_name", "t_year")
 
-evs_2017 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/ZA7500_v1-0-0.sav.zip", user_na = TRUE) %>%
+evs_2017 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EVS/ZA7500_v1-0-0.sav.zip", user_na = TRUE) %>%
   mutate(t_country = c_abrv,
          t_id = row_number(),
          s_id = as.character(id_cocas),
@@ -27,7 +31,7 @@ evs_2017 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R play
          t_year = year,
          t_project = "EVS")
 
-evs_1981_2008 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/ZA4804_v3-0-0.sav.zip", user_na = TRUE) %>%
+evs_1981_2008 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EVS/ZA4804_v3-0-0.sav.zip", user_na = TRUE) %>%
   mutate(t_country = S009,
          t_id = row_number(),
          s_id = as.character(S006),
@@ -37,7 +41,7 @@ evs_1981_2008 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R
          t_year = S020,
          t_project = "EVS")
 
-ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/ESS1-8e01.zip", user_na = TRUE) %>%
+ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/ESS/ESS1-8e01.zip", user_na = TRUE) %>%
   mutate(t_country = cntry,
          t_id = row_number(),
          s_id = as.character(idno),
@@ -53,7 +57,7 @@ ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playg
   ungroup()
 
 
-eqls_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/eqls_integrated_trend_2003-2016.sav", user_na = TRUE) %>%
+eqls_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EQLS/eqls_integrated_trend_2003-2016.zip", user_na = TRUE) %>%
   mutate(t_country = plyr::mapvalues(Y16_Country,
                                      c(1:36),
                                      c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "GR", "ES", 
@@ -136,8 +140,7 @@ create_codebook <- function(data) {
     unite("valfreqs", c(2:ncol(.)), sep = "\n") %>%
     mutate(valfreqs = sub("\\s+$", "", valfreqs))
   
-  full_join(var_labels, freqs, by = "varname") %>%
-    select(t_table_name, varname, varlabel, valfreqs, target_var)
+  full_join(var_labels, freqs, by = "varname")
 }
 
 
@@ -188,9 +191,11 @@ create_cwt <- function(data) {
 }
 
 
-codebook_all1 <- rio::import("codebook_all1.xlsx") %>%
+codebook_all1 <- rio::import("templates/codebook_all1.xlsx") %>%
   filter(!is.na(target_var))
 
+
+rio::export(unique(codebook_all1$target_var), "templates/var_names_labels.xlsx")
 
 
 data_tables <- c("EVS_2017", "EVS_1981_2008", "EQLS_1_4", "ESS_1_8")
@@ -222,8 +227,7 @@ cwt_all %>%
 
 ### import filled-out cwt and harmonize! ----------------------
 
-cwt_all1 <- rio::import("cwt_all1.xlsx")
-
+cwt_all1 <- rio::import("templates/cwt_all1.xlsx")
 
 
 harmonize <- function(table_name_input, cwt_name_input) {
@@ -278,15 +282,68 @@ all_data <- bind_rows(evs_2017_h, evs_1981_2008_h,
                       ess_1_8_h, eqls_1_4_h) %>%
   mutate(t_project = sub("\\_.*", "", t_table_name))
 
-rio::export(all_data, "all_data.csv")
+rio::export(all_data, "data/all_data.csv")
 all_data <- rio::import("data/all_data.csv")
+
+names(all_data)
+
+list_surveys <- all_data %>%
+  count(t_project, t_round, t_country, t_year)
 
 
 a <- all_data %>%
-  group_by(t_project, t_country, t_year) %>%
-  count() %>%
-  group_by(t_project) %>%
-  count(t_project)
+  group_by(t_project, t_round, t_country, t_year) %>%
+  summarise_at(vars(starts_with("t_trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
+  select(1:4, t_trust_socmedia)
+
+
+list_surveys_trust <- all_data %>%
+  group_by(t_project, t_round, t_country, t_year) %>%
+  summarise_at(vars(starts_with("t_trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
+  gather(variable, value, 5:32, na.rm = TRUE) %>%
+  ungroup() %>%
+  full_join(rio::import("templates/var_names_labels.xlsx"))
+
+list_surveys %>% count(t_project, t_round)
+
+list_surveys_trust %>%
+  filter(variable == "t_trust_parl") %>%
+  count(t_project, t_round)
+
+list_surveys_trust %>% count(variable) %>% 
+  arrange(n) %>%
+  print(n = 30)
+
+list_surveys_trust %>% count(label) %>%
+  ggplot(., aes(x = reorder(label, n), y = n)) + 
+  geom_bar(stat="identity") +
+  theme_bw() +
+  xlab("") +
+  ylab("Number of surveys") +
+  coord_flip()
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+all_data %>%
+  group_by(t_project, t_round, t_country, t_year) %>%
+  summarise_at(vars(starts_with("t_trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
+  gather(variable, value, 5:32, na.rm = TRUE) %>%
+  filter(variable != "t_trust_soc") %>%
+  ungroup() %>%
+  left_join(rio::import("paper/var_names_labels.csv")) %>%
+  group_by(label) %>%
+  mutate(countn = n()) %>%
+  count(t_project, label, countn) %>%
+  ggplot(., aes(x = reorder(label, countn), y = n, fill = t_project)) + 
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  xlab("") +
+  ylab("Number of surveys") +
+  scale_fill_manual(name = "Project",
+                     values = cbPalette[1:3]) +
+  coord_flip()
+
+
 
 
 
@@ -384,6 +441,8 @@ weighted.sd <- function(x, w, na.rm = TRUE) sqrt(weighted.var(x, w, na.rm = TRUE
 
 library(reshape2)
 
+## means trust police 1 ------------------------
+
 dodge <- position_dodge(width=0.5)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
@@ -433,7 +492,36 @@ all_data %>%
          Proportions (second and third facet) multiplied by 10 for comparability.") +
     facet_wrap("type")
   
-  
+## means trust police 2 ----------------
+
+all_data %>%
+  group_by(t_project, t_country, t_year) %>%
+  summarise(`Proportion > 5` = weighted.mean(ifelse(t_trust_police > 5, 1, 0)*10, 
+                                             w = t_weight, na.rm = TRUE),
+            `Proportion >= 5` = weighted.mean(ifelse(t_trust_police >= 5, 1, 0)*10, 
+                                              w = t_weight, na.rm = TRUE),
+            `Mean (0-10)` = weighted.mean(t_trust_police, w = t_weight, na.rm = TRUE)) %>%
+  gather(variable, value, 4:6) %>%
+  filter(!is.na(value)) %>%
+  group_by(t_country, t_year, variable) %>%
+  mutate(counts = n()) %>%
+  filter(counts > 1) %>%
+  ggplot(., aes(x = reorder(paste(t_country, t_year), desc(paste(t_country, t_year))), y = value)) +
+  geom_line(aes(group = paste(t_country, t_year))) +
+  geom_point(aes(col = t_project), size = 2) +
+  xlab("") + ylab("Aggregate country-year level") +
+  coord_flip() +
+  theme_minimal() +
+  scale_color_manual(name = "Project",
+                     values = cbPalette[1:3]) +
+  theme(legend.position="bottom") +
+  labs(caption = "Data souce: ESS 1-8, EQLS 1-4, EVS 1-5.
+       Proportions (second and third facet) multiplied by 10 for comparability.") +
+  facet_wrap("variable")
+
+
+### ---------------
+
 all_data %>%
   filter(t_country == "PL") %>%
   group_by(t_project, t_year) %>%

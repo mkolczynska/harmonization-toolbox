@@ -1,0 +1,29 @@
+variable,label
+t_trust_soc,Most people
+t_trust_parl,Parliament
+t_trust_leg,Legal system
+t_trust_police,Police
+t_trust_politicians,Politicians
+t_trust_polpart,Political parties
+t_trust_ep,European Parliament
+t_trust_un,United Nations
+t_trust_church,Church
+t_trust_army,Army
+t_trust_educ,Education system
+t_trust_press,Press
+t_trust_labunion,Labor unions
+t_trust_civserv,Civil service
+t_trust_socsec,Social security
+t_trust_gov,Government
+t_trust_companies,Major companies
+t_trust_envorg,Environmental organizations
+t_trust_health,Healthcare system
+t_trust_eu,European Union
+t_trust_nato,NATO
+t_trust_socmedia,Social media
+t_trust_press_newsmedia,News media
+t_trust_locauth,Local autorities
+t_trust_banks,Banks
+t_trust_charity,Charity organizations
+t_trust_pension,Pension system
+t_trust_socbenefit,Social benefits system
