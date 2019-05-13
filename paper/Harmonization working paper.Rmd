@@ -2,7 +2,7 @@
 title: |
   |
   | 
-  | \vspace{1cm}DIY Survey Data Harmonization: A Reproducible Worlflow and Toolbox*^[*Corresponding address: kolczynska.1@osu.edu. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research.]\vspace{0.5cm}
+  | \vspace{1cm}DIY Survey Data Harmonization: A Reproducible Workflow and Toolbox*^[*Corresponding address: kolczynska.1@osu.edu. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research.]\vspace{0.5cm}
   |
 author: |
   | Marta Kołczyńska
