@@ -1,0 +1,27 @@
+variable,label
+trust_army,Army
+trust_banks,Banks
+trust_charity,Charity organizations
+trust_church,Church
+trust_civserv,Civil service
+trust_companies,Major companies
+trust_educ,Education system
+trust_envorg,Environmental organizations
+trust_ep,European Parliament
+trust_eu,European Union
+trust_gov,Government
+trust_health,Healthcare system
+trust_jus,Legal system
+trust_local,Local autorities
+trust_nato,NATO
+trust_parl,Parliament
+trust_pension,Pension system
+trust_police,Police
+trust_politicians,Politicians
+trust_polpart,Political parties
+trust_press,Press
+trust_socbenefit,Social benefits system
+trust_socmedia,Social media
+trust_socsec,Social security
+trust_tradeu,Tradeu unions
+trust_un,United Nations
