@@ -11,7 +11,7 @@ sessionInfo()
 
 ### opening the data and creating basic technical variables -----------
 
-# EVS 2017 (ZA7500_v1-0-0.sav.zip): https://dbk.gesis.org/dbksearch/GDESC2.asp?no=0009&DB=E
+# EVS 2017 (ZA7500_v2-0-0.sav): https://dbk.gesis.org/dbksearch/sdesc2.asp?no=7500&db=e&doi=10.4232/1.13314
 # EVS 1981-2008 (ZA4804_v3-0-0.sav.zip): https://dbk.gesis.org/dbksearch/GDESC2.asp?no=0009&DB=E
 # ESS 1-8 (ESS1-8e01.zip): https://www.europeansocialsurvey.org/downloadwizard/
 # EQLS (eqls_integrated_trend_2003-2016.sav): https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=7348
@@ -22,11 +22,11 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 
 basic_vars <- c("table_name", "t_country", "s_id", "t_id", "t_weight", "t_round", "t_year")
 
-ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/ESS/ESS1-8e01.zip", user_na = TRUE) %>%
+ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/data-for-harm/ESS/ESS1-8e01.zip", user_na = TRUE) %>%
   mutate(t_country = cntry,
          t_id = row_number(),
          s_id = as.character(idno),
-         t_weight = dweight * pspwght,
+         t_weight = pspwght,
          table_name = "ESS_1_8",
          t_project= "ESS",
          t_round = essround,
@@ -37,17 +37,17 @@ ess_1_8 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playg
          t_year = ifelse(cntry == "EE" & essround == 5, 2011, t_year)) %>%
   ungroup()
 
-evs_5 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EVS/ZA7500_v1-0-0.sav.zip", user_na = TRUE) %>%
+evs_5 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/data-for-harm/EVS/ZA7500_v2-0-0.sav.zip", user_na = TRUE) %>%
   mutate(t_country = c_abrv,
          t_id = row_number(),
          s_id = as.character(id_cocas),
-         t_weight = 1,
+         t_weight = gweight,
          t_round = 5,
          table_name = "EVS_5",
          t_year = year,
          t_project = "EVS")
 
-evs_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EVS/ZA4804_v3-0-0.sav.zip", user_na = TRUE) %>%
+evs_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/data-for-harm/EVS/ZA4804_v3-0-0.sav.zip", user_na = TRUE) %>%
   mutate(t_country = S009,
          t_id = row_number(),
          s_id = as.character(S006),
@@ -58,9 +58,7 @@ evs_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playg
          t_project = "EVS")
 
 
-### EQLS
-
-eqls_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/R playground/data-for-harm/EQLS/eqls_integrated_trend_2003-2016.zip", user_na = TRUE) %>%
+eqls_1_4 <- haven::read_sav("C:/Users/mkolc/Google Drive/Work in progress/data-for-harm/EQLS/eqls_integrated_trend_2003-2016.zip", user_na = TRUE) %>%
   mutate(t_country = plyr::mapvalues(Y16_Country,
                                      c(1:36),
                                      c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "GR", "ES", 
@@ -151,7 +149,7 @@ codebook_ess_1_8 <- create_codebook(ess_1_8) %>%
   mutate(table_name = "ESS_1_8")
 
 codebook_evs_5 <- create_codebook(evs_5) %>%
-  mutate(table_name = "EVS_2017")
+  mutate(table_name = "EVS_5")
 
 codebook_evs_1_4 <- create_codebook(evs_1_4) %>%
  mutate(table_name = "EVS_1_4")
@@ -297,9 +295,9 @@ skimr::skim(all_data)
 
 all_data %>% group_by(t_project) %>% summarise(max(isced, na.rm = TRUE))
 
-rio::export(all_data, "data/all_data.csv")
 write.csv(all_data, file=gzfile("data/all_data.csv.gz"), row.names = FALSE)
 all_data <- rio::import("data/all_data.csv.gz")
+
 
 
 ### value labels
@@ -381,23 +379,17 @@ table_trust_survey <- all_data %>%
 
 ### list of trust items by survey -----------------
 
-list_surveys_trust <- all_data %>%
-  group_by(t_project, t_round, t_country, t_year) %>%
-  summarise_at(vars(starts_with("trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
-  gather(variable, value, 5:32, na.rm = TRUE) %>%
+list_surveys_trust <- table_trust_survey %>%
+  gather(variable, value, 5:30, na.rm = TRUE) %>%
   ungroup() %>%
-  full_join(rio::import("templates/var_names_labels.xlsx"))
+  left_join(rio::import("data/var_names_labels.csv"))
 
 
 ### plot: availability of trust items -----------------
 
-all_data %>%
-  group_by(t_project, t_round, t_country, t_year) %>%
-  summarise_at(vars(starts_with("trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
-  gather(variable, value, 5:32, na.rm = TRUE) %>%
-  filter(variable != "t_trust_soc") %>%
-  ungroup() %>%
-  left_join(rio::import("paper/var_names_labels.csv")) %>%
+table_trust_survey %>%
+  gather(variable, value, 5:30, na.rm = TRUE) %>%
+  left_join(rio::import("data/var_names_labels.csv"), by = "variable") %>%
   group_by(label) %>%
   mutate(countn = n()) %>%
   count(t_project, label, countn) %>%
@@ -411,6 +403,13 @@ all_data %>%
   coord_flip()
 
 
+
+
+
+
+
+
+### OLD CODE ----------------------------
 
 ### country-year availability of trust in police -----------------
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.3.29)  17 MAY 2019 18:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.3.29)  22 JUL 2019 15:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1699,7 +1699,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 775.
 Here is how much of TeX's memory you used:
  20073 strings out of 494527
  316051 string characters out of 6175008
- 417596 words of memory out of 5000000
+ 417598 words of memory out of 5000000
  22833 multiletter control sequences out of 15000+600000
  137188 words of font info for 495 fonts, out of 8000000 for 9000
  34 hyphenation exceptions out of 8191
@@ -1717,10 +1717,10 @@ ata/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb><c:/Users/mkol
 c/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/mathdesign/mdbch/md-chr
 8t.pfb><c:/Users/mkolc/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/ma
 thdesign/mdbch/md-chri8t.pfb>
-Output written on Harmonization_working_paper.pdf (30 pages, 727706 bytes).
+Output written on Harmonization_working_paper.pdf (30 pages, 727941 bytes).
 PDF statistics:
- 571 PDF objects out of 1000 (max. 8388607)
- 516 compressed objects within 6 object streams
+ 575 PDF objects out of 1000 (max. 8388607)
+ 520 compressed objects within 6 object streams
  152 named destinations out of 1000 (max. 500000)
  37045 words of extra memory for PDF output out of 42996 (max. 10000000)
 
