@@ -1,6 +1,14 @@
 .Rproj.user
+.Rproj
 .Rhistory
 .RData
 .Ruserdata
+.tex
+.zip
+.log
+.docx
+.gz
 EB/ 
 harmonization-europe-trust.csv.gz
+paper/*_cache/
+paper/*_files/
