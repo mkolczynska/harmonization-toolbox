@@ -1,37 +1,13 @@
-## Welcome to GitHub Pages
+## Harmonization toolboxhttps://github.com/mkolczynska/harmonization-toolbox/blob/gh-pages/index.md
 
-You can use the [editor on GitHub](https://github.com/mkolczynska/harmonization-toolbox/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This repository contains various resources for secondary analysis of cross-national survey data, including ex-post survey data harmonization, such as survey metadata tables, crosswalks, and workflow ideas.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Eurobarometer variables list
 
-### Markdown
+The [Eurobarometer variables list](https://github.com/mkolczynska/harmonization-toolbox/tree/master/survey-metadata) provides a list of all variables in all Eurobarometer rounds available through the [GESIS Data Catalogue](https://dbk.gesis.org/) as of September 2020.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The variable labels and variable groups originate from [GESIS ZACAT](https://zacat.gesis.org/webview/). The variable labels need not be identical to those in the actual data (although in practice they almost always are).
 
-```markdown
-Syntax highlighted code block
+### Funding
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mkolczynska/harmonization-toolbox/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Polish National Agency for Academic Exchange within the Bekkerprogramme (award number BEK/2019/1/00133).
