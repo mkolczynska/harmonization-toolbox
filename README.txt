@@ -1,6 +1,0 @@
-DIY Survey Data Harmonization: A Reproducible Workflow and Toolbox
-
-Marta Kołczyńska
-
-Abstract
-Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While increasingly researchers combine different survey projects to analyze them as a single data set, there are no standards for data processing and its documentation in a way that enables computational reproducibility. This paper describes a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks and a combination of automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standards observed in survey data sets. The presented sample tools rely on the programming language R and spreadsheets - both common software among social scientists. Harmonization of variables on trust in institutions from three cross-national survey projects serve as an illustration of the proposed workflow.
