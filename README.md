@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4049816.svg)](https://doi.org/10.5281/zenodo.4049816)
+<!-- badges: end -->
+
 ## Description
 
 This repository contains various resources for secondary analysis of cross-national survey data, including ex-post survey data harmonization, such as survey metadata tables, crosswalks, and workflow ideas.
