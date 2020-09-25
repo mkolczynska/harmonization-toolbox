@@ -10,4 +10,4 @@ The variable labels and variable groups originate from [GESIS ZACAT](https://zac
 
 ### Funding
 
-Polish National Agency for Academic Exchange within the Bekkerprogramme (award number BEK/2019/1/00133).
+Polish [National Agency for Academic Exchange](https://nawa.gov.pl/) within the Bekkerprogramme (award number BEK/2019/1/00133).
