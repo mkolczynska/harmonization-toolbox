@@ -1,4 +1,4 @@
-## Harmonization toolboxhttps://github.com/mkolczynska/harmonization-toolbox/blob/gh-pages/index.md
+## Harmonization toolbox
 
 This repository contains various resources for secondary analysis of cross-national survey data, including ex-post survey data harmonization, such as survey metadata tables, crosswalks, and workflow ideas.
 
