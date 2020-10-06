@@ -4,7 +4,14 @@
 
 ## Survey metadata
 
-This repository contains tables with survey metadata (variable names, variable labels, archive IDs, wave numbers, etc.) from cross-national surveys. Currently only Eurobarometer, but more projects coming soon. 
+This repository contains tables with survey metadata (variable names, variable labels, archive IDs, wave numbers, etc.) from cross-national surveys. Currently only Eurobarometer and International Social Survey Programme, but more projects coming soon. 
+
+
+## International Social Survey Programme codebooks for waves 1985-2018
+
+[International Social Survey Programme](http://w.issp.org/menu-top/home/) codebooks for waves 1985-2018: list of variable names, labels and frequencies of realized values of variables, as well as wave numbers and GESIS Archive IDs.
+
+[ISSP website at GESIS](https://www.gesis.org/en/issp/home)
 
 ## Eurobarometer variables lists
 
