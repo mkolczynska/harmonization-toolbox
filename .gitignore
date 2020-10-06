@@ -9,6 +9,9 @@
 .docx
 .gz
 EB/ 
+pictures/
+not-shared/
+survey-data/
 harmonization-europe-trust.csv.gz
 paper/*_cache/
 paper/*_files/
