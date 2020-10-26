@@ -1,41 +1,37 @@
 ---
-title: |
-  |
-  | 
-  | \vspace{1cm}Survey Data Harmonization: A Reproducible Workflow and Toolbox*^[*Corresponding address: mkolczynska@isppan.waw.pl. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research, as well as Przemek Powałko, and funding from Poland's National Science Centre (2019/32/C/HS6/00421).]\vspace{0.5cm}
-  |
+title: "Survey Data Harmonization: A Reproducible Workflow and Toolbox*^[*Corresponding address: mkolczynska@isppan.waw.pl. Acknowledgments: I am grateful to all those generous people who invest their time into open-source software and reproducible research, as well as Przemek Powałko, and funding from Poland's National Science Centre (2019/32/C/HS6/00421).]"
 author: |
   | Marta Kołczyńska
   | Institute of Political Studies of the Polish Academy of Sciences
 date: |
-  |       
-  |
   | `r gsub("^0", "", format(Sys.time(), "%d %B, %Y"))`
-  |
-  |
-linestretch: 1.2
-colorlinks: true
-abstract: \noindent\setstretch{1}Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While increasingly researchers combine different survey projects to analyze them as a single data set, there are no standards for data processing and its documentation in a way that enables computational reproducibility. This paper describes a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks and a combination of automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standards observed in survey data sets. The presented sample tools rely on the programming language R and spreadsheets - both common software among social scientists. Harmonization of variables on trust in institutions from three cross-national survey projects serve as an illustration of the proposed workflow.\vspace{.8cm}
-bibliography: "C:/Users/mkolc/Google Drive/library.bib"
-csl: "citation_styles/apa.csl"
+abstract: |
+  
+  Ex-post harmonization of survey data creates new opportunities for research by extending the geographical and/or time coverage of analyses. While increasingly researchers combine different survey projects to analyze them as a single data set, there are no standards for data processing and its documentation in a way that enables computational reproducibility. This paper describes a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks and a combination of automation for improved reproducibility and efficiency, with human decision-making that allows for flexibility necessary in dealing with the variation and diverse standards observed in survey data sets. The presented sample tools rely on the programming language R and spreadsheets - both common software among social scientists. Harmonization of variables on trust in institutions from three cross-national survey projects serve as an illustration of the proposed workflow.
+keywords: keywords
+lang: en-US
+class: man
+figsintext: true
+numbersections: true
+encoding: UTF-8
+bibliography: library.bib
+biblio-style: apalike
 output:
   bookdown::pdf_document2:
-    includes:
-      in_header: header.tex
-    toc: no
-    keep_tex: true
-mainfont: Times New Roman
-sansfont: Times New Roman
-fontsize: 12pt
-spacing: double
-link-citations: true
-documentclass: article
-geometry: margin=1in
-always_allow_html: yes
+     citation_package: natbib
+     keep_tex: true
+     toc: false
 header-includes:
-   - \usepackage{dcolumn}
-   - \usepackage{color}
+   - \usepackage{amsmath}
+   - \usepackage[utf8]{inputenc}
+   - \usepackage[T1]{fontenc}
+   - \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+   - \usepackage{setspace}\doublespacing
+   - \linespread{1.5}
+editor_options: 
+  chunk_output_type: console
 ---
+
 
 
 ```{r setup, include=FALSE, echo=F}
@@ -82,13 +78,13 @@ library(kableExtra) # for making prettier tables
 
 # Introduction
 
-International multi-wave survey projects are a major advancement in the social science infrastructure for cross-national research, yet their country and time coverage remains necessarily limited by funding availability, organizational conditions, PIs' interests, and other factors. Ex-post harmonization of survey data promises to overcome these limitations to create larger data sets with almost global coverage. At the same time, ex-post harmonization can create country time series necessary for longitudinal analyses, which enables stronger tests of theoretical mechanisms than cross-country comparisons. Thus, harmonization of existing data in order to maximally exploit their potential for research is one of the major challenges in empirical social science research. While the promises of new research opportunities are attractive to many, the associated challenges are multi-faceted - including technical, logistical, methodological, and substantive - and not yet well understood. This paper addresses one of these challenges, concerning the organization and documentation of the ex-post survey data harmonization process in a way that enables reproducibility of all data processing steps, as well as facilitates knowledge exchange.
+International multi-wave survey projects are a major advancement in the social science infrastructure for cross-national research, yet their country and time coverage remains necessarily limited by funding availability, organizational conditions, PIs' interests, and other factors. Ex-post harmonization of survey data promises to overcome these limitations to create larger data sets with global coverage. At the same time, ex-post harmonization can create country time series necessary for longitudinal analyses, which enables stronger tests of theoretical mechanisms than cross-country comparisons. Thus, harmonization of existing data in order to maximally exploit their potential for research is one of the major challenges in empirical social science research. Despite the promises of new research opportunities, the associated challenges are multi-faceted - including technical, logistical, methodological, and substantive - and not yet well understood. This paper addresses one of these challenges, concerning the organization and documentation of the ex-post survey data harmonization process in a way that enables reproducibility of all data processing steps, as well as facilitates knowledge exchange.
 
 The number of publications relying on combined data from different cross-national survey projects is increasing. These range from small projects where the harmonized data set is created for the purposes of a single study [e.g., @Caughey2019; @Mauk2019] to large initiatives performing ex-post survey data harmonization not -- or not only -- for own substantive research, but in order to improve the social science research infrastructure [@Bekkers2015; @Klassen2018; @Slomczynski2018]. Correspondingly, the effort invested in the creation and sharing of the documentation of the harmonization process is characterized by substantial variation. 
 
 The diversity of approaches to documenting the harmonization process reflects the general lack of clear and respected standards for computational reproducibility, i.e. the ability to re-create the results of published research using materials - data and code - provided by the authors of the original study, even if it is recognized that the value of published research largely depends on its reproducilibity [@Buckheit1995; @Munafo2017]. In addition to data and code, researchers are starting to recognize the role of the programming environment for computational reproducibility.
 
-This paper describes a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks for mapping one coding scheme onto another, which allow full computational reproducibility. The described approach includes automated steps that ensure efficiency of data processing, with human decision-making to integrate methodological expertise and domain knowledge, and enable flexibility necessary in dealing with the variation and diverse standards observed in survey data sets. The product of the harmonization process - apart from the harmonized dataset itself - is its documentation in form of crosswalk tables that map (1) source variables to target variables and (2) source values to target values. The readability of crosswalks enables the verification and reproduction of the harmonization process^[This work builds on the experiences of the following projects: (1) the *Democratic Values and Protest Behavior: Data Harmonization, Measurement Comparability, and Multi-Level Modeling* project funded by the (Polish) National Science Centre (2012/06/M/HS6/00322, 2013-2016), its continuation (2) *Survey Data Recycling: New Analytic Framework, Integrated Database, and Tools for Cross-national Social, Behavioral and Economic Research* funded by the U.S. National Science Foundation (2017-2021, PTE Federal award 1738502), (3) *New Approach to Analyses of the Relationship between Democracy and Trust: Comparing European Countries Using Quantitative and Qualitative Methodology* funded by the (Polish) National Science Centre (2012/05/N/HS6/03886, 2013-2015), (4) *Stratified Modernity, Trust in State Institutions and Democratic Change in Cross-national Perspective: Using Harmonized Survey Data from 116 Countries* supported by the Silverman Research Support Award from the Department of Sociology, The Ohio State University (2017), (5) *Effects of Status Inconsistency on Political Values, Attitudes and Behavior: A Cross-national Analysis with Survey Data Harmonized Ex-post*, funded by the Institute of Philosophy and Sociology, Polish Academy of Science (2017/S/05, 2018), and (6) *Causes and Consequences of Political Trust: Polarization and Democratic Utility of Trust in Cross-national Perspective*, funded by the National Science Centre (2019/32/C/HS6/00421).]. 
+This paper describes a procedure and a set of simple tools for the exploration, recoding, and documentation of harmonization of survey data, relying on crosswalks for mapping one coding scheme onto another, which allow full computational reproducibility. The described approach includes automated steps that ensure efficiency of data processing, with human decision-making to integrate methodological expertise and domain knowledge, and enable flexibility necessary in dealing with the variation and diverse standards observed in survey data sets. The product of the harmonization process - apart from the harmonized dataset itself - is its documentation in form of crosswalk tables that map (1) source variables to target variables and (2) source values to target values. The readability of crosswalks enables the verification and reproduction of the harmonization process^[This work builds on experiences of the following projects: (1) the *Democratic Values and Protest Behavior: Data Harmonization, Measurement Comparability, and Multi-Level Modeling* project funded by the (Polish) National Science Centre (2012/06/M/HS6/00322, 2013-2016), its continuation (2) *Survey Data Recycling: New Analytic Framework, Integrated Database, and Tools for Cross-national Social, Behavioral and Economic Research* funded by the U.S. National Science Foundation (2017-2021, PTE Federal award 1738502), (3) *New Approach to Analyses of the Relationship between Democracy and Trust: Comparing European Countries Using Quantitative and Qualitative Methodology* funded by the (Polish) National Science Centre (2012/05/N/HS6/03886, 2013-2015), (4) *Stratified Modernity, Trust in State Institutions and Democratic Change in Cross-national Perspective: Using Harmonized Survey Data from 116 Countries* supported by the Silverman Research Support Award from the Department of Sociology, The Ohio State University (2017), (5) *Effects of Status Inconsistency on Political Values, Attitudes and Behavior: A Cross-national Analysis with Survey Data Harmonized Ex-post*, funded by the Institute of Philosophy and Sociology, Polish Academy of Science (2017/S/05, 2018), and (6) *Causes and Consequences of Political Trust: Polarization and Democratic Utility of Trust in Cross-national Perspective*, funded by the National Science Centre (2019/32/C/HS6/00421).]. 
 
 The example presented in this paper uses the programming language R and spreadsheets - both common software among social scientists. The general framework combining recoding syntax and spreadsheets is software-agnostic and can be used with any programming language. Survey variables on trust in institutions from three cross-national survey projects - the European Social Survey rounds 1-9 [@ess1; @ess2; @ess3; @ess4; @ess5; @ess6; @ess7; @ess8; @ess9], the European Values Study [@evs1-4; @evs5v2], and the European Quality of Life Survey [@eqls1-4] - serve as an illustration of the proposed workflow.
 
@@ -131,6 +127,7 @@ The three large project described in this section have two other things in commo
 
 A study can be called reproducible “if all of the code and data used to generate the numbers and figures in the paper are available and exactly produce the published results” [@Leek2017: 111]. "Guidelines for preparing replication files" by the *American Journal of Political Science* (AJPS) require that authors of all accepted articles provide replication materials and provide detailed instructions [@AJPS2016]. In articles that rely on secondary analyses, these replication materials must include "the relevant software commands for extracting the data from the separate sources, and for merging the separate subsets of data into the overall analysis dataset" (p. 4). Additionally, there should always be "a case identification variable that links observations in the analysis dataset to their original records in the source dataset. And, it is important to identify the specific version of the source dataset and the date that it is accessed in order to construct the analysis dataset." (p. 4)
 
+
 # The proposed workflow
 
 This section describes the harmonization steps and associated tools, to provide an overview of the whole process. In the proposed workflow, harmonization documentation - variable and values crosswalks - are a result of the harmonization process itself, not a separate product requiring additional attention.
@@ -148,9 +145,9 @@ Step 3: (Optional) Recording characteristics of source items.
 
 \parindent 0.5in
 
-The first step is at the variable level, and involves identifying variables for harmonization in the source data files, and assigning a standardized target variable name to each source variable of interest. To do this, a table with a list and description of all source variables –- the *codebook* –- is created in the programming environment on the basis of metadata from the source data files, and includes variable names, labels, as well as values and value labels and their corresponding frequencies. The codebook is then exported to a spreadsheet program, where variable lables are filtered to identify candidates for source variables. In some cases, for example is variable labels are too short or otherwise uninformative - it is necessary to consult the original survey documentation. After all source variables corresponding to the concepts of interest -- in this case trust in institutions -- are identified via filter searches or otherwise, the table is imported back into the programming environment.
+The first step is at the variable level, and involves identifying variables for harmonization in the source data files, and assigning a standardized target variable name to each source variable of interest. To do this, a table with a list and description of all source variables –- the *codebook* or *data dictionary* –- is created on the basis of metadata from the source data files, and includes variable names, labels, as well as values and value labels and their corresponding frequencies. The codebook can be conveniently filtered to identify candidates for source variables. In some cases, for example if variable labels are too short or otherwise uninformative, it is necessary to consult the original survey documentation. The list of source variables corresponding to the concepts of interest -- in this case trust in institutions -- is used to select the necessary subset of the survey data.
 
-The second step is at the level of individual values of the chosen source variables, and requires mapping these source values onto a common coding scheme of the respective target variable. Subsets of source data files are selected that include only the variables tagged in Step 1. For those variables, a *cross-walk table* is created, i.e., a table similar to the codebook, but where each source value corresponds to one row. This table is then exported to a spreadsheet, where each source value is assigned a target value on the basis of the common coding scheme. This step also includes identifying missing value codes (such as negative numbers or multiples of 8 or 9) as missing. Next, the cross-walk table is imported back into the programming environment, where the source and target values for each source variable are mapped, resulting in a set of harmonized variables.
+The second step is at the level of individual values of the chosen source variables, and requires mapping these source values onto a common coding scheme of the respective target variable. Subsets of source data files are selected that include only the variables tagged in Step 1. For those variables, a *cross-walk table* is created, i.e., a table similar to the codebook, but where each source value corresponds to one row. Each source value is assigned a target value on the basis of the common coding scheme. This step also includes identifying missing value codes (such as negative numbers or multiples of 8 or 9) as missing. The completed cross-walk table is used for mapping (recoding) values of the source variables to their target values.
 
 The third, optional, step is at the data file level, and refers to the coding of properties of the source variables that are worth preserving because of methodological reasons, such as the length or direction of the original response scales. Typically, these properties vary between, but not within, survey projects. For example, in the European Social Survey, questions about trust in institutions are accompanied by 11-point scales ranging from 0 (No trust at all) to 10 (Completely trust) [@ESS2016b]. 
 
@@ -247,14 +244,14 @@ Other items occur only in selected projects or project waves. For example, the i
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9")
 
-all_data <- import("../data/all_data.csv.gz")
+all_data <- import("../survey-data/all_data.csv.gz")
 
 all_data %>%
   group_by(t_project, t_round, t_country, t_year) %>%
   summarise_at(vars(starts_with("trust")), funs(weighted.mean(., w = t_weight, na.rm = TRUE))) %>%
   gather(variable, value, 5:30, na.rm = TRUE) %>%
   ungroup() %>%
-  left_join(rio::import("../data/var_names_labels.csv")) %>% 
+  left_join(rio::import("../survey-data/var_names_labels.csv")) %>% 
   group_by(label) %>%
   mutate(countn = n()) %>%
   count(t_project, label, countn) %>%
