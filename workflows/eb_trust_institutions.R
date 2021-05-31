@@ -244,7 +244,7 @@ eb_small_long_harm %>%
   distinct(country, wave, year) %>%
   count(country) %>%
   ggplot(., aes(x = reorder(country, n), y = n)) +
-  geom_bar(stat = "Identity", col = "gray50") +
+  geom_bar(stat = "Identity", fill = "gray50") +
   theme_minimal() +
   ylab("number of waves") + xlab("") +
   ggtitle("Number of waves available per country") +
