@@ -37,3 +37,7 @@ create_codebook_short <- function(data) {
 }
 ```
 
+### Eurobarometer' variable labels: word cloud
+
+<img src="eb_wordcloud.png" alt="Eurobarometer labels wordcloud" width="600"/>
+
