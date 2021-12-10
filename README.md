@@ -1,5 +1,5 @@
 <!-- badges: start -->
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4049816.svg)](https://doi.org/10.5281/zenodo.4049816)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4049815.svg)](https://doi.org/10.5281/zenodo.4049815)
 <!-- badges: end -->
 
 ## Harmonization toolbox
