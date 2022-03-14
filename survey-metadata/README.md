@@ -18,11 +18,11 @@ This repository contains tables with survey metadata (variable names, variable l
 
 There are actually two lists:
 
-(1) `eb_var_names_labels.*` is a list of all variable names and labels taken from the data sets (metadata embedded in the Stata files, to be precise), as well as archive IDs, wave numbers and descriptions, and wave dates. The wave descriptions and dates come from GESIS-ZACAT and the GESIS data description pages (e.g. https://search.gesis.org/research_data/ZA7781).  
-**updated through EB95.1 (ZA7781), March-April 2021**
+(1) `eb_var_names_labels.*` is a list of all variable names and labels taken from the data sets (metadata embedded in the Stata files, to be precise), as well as archive IDs, wave numbers and descriptions, and wave dates. The wave descriptions and dates come from GESIS-ZACAT and the GESIS data description pages (e.g. https://search.gesis.org/research_data/ZA7783).  
+**updated through EB95.3 (ZA7783), June-July 2021**
 
 (2) `eb_var_groups_zacat.*` is a list of variable labels and variable groups from [GESIS ZACAT](https://zacat.gesis.org/webview/) matched to archive IDs and wave numbers and dates. The variable labels need not be identical to those in the actual data. The list may be incomplete (may not include all variables that are in the data) and contains occasional duplicated labels (same label in two different variable groups within the same EB wave).  
-**updated through EB95.1 (ZA7781), March-April 2021**
+**updated through EB95.3 (ZA7783), June-July 2021**
 
 To create tables (1), the data were downloaded with the [`gesisdata` package](https://github.com/fsolt/gesisdata), which automates the download of data from the GESIS Data Archive (registration to the GESIS archive is necessary; also note that using the GESIS Data Archive means you accept the terms and conditions).
 
