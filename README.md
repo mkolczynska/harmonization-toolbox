@@ -9,7 +9,7 @@ Resources for secondary analysis of data from cross-national survey projects, in
 This work is funded by the National Science Centre under grant number 2019/32/C/HS6/00421.
 
 
-### Trust in institutions in Central-Eastern Europe, 2004-2022
+### Trust in institutions in Central-Eastern Europe, 2004-
 
 Data from the [Eurobarometer](https://www.gesis.org/en/eurobarometer-data-service/search-data-access/data-access)
 
