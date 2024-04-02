@@ -8,6 +8,11 @@ Resources for secondary analysis of data from cross-national survey projects, in
 
 This work is funded by the National Science Centre under grant number 2019/32/C/HS6/00421.
 
+The workflow to harmonize individual-level data from cross-national surveys is describe here:  
+
+*Kołczyńska, M. (2022). Combining multiple survey sources: A reproducible workflow and toolbox for survey data harmonization. Methodological Innovations, 15(1), 62-72. https://doi.org/10.1177/20597991221077923*
+
+
 
 ### Trust in institutions in Central-Eastern Europe, 2004-
 
