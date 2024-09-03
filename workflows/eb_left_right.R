@@ -285,12 +285,11 @@ waves <- eb_small_harm %>%
   as.character()
 
 eb_small_harm %>%
-  filter(country %in% countries_prior_2004) %>%
-  filter(!country %in% c("", "CY-TCC", "RS-KM", "DE-E", "DE-W", "GB-GBN", "GB-NIR", "GB", "DE")) %>%
+  filter(country == "IE") %>% 
   group_by(archive_id, year, wave, mid_survey, country) %>%
   summarise(mean = mean(lrscale*weight_cal, na.rm = T),
             se = sd(lrscale, na.rm = T) / sqrt(n())) %>%
-  ungroup() %>%
+  ungroup() %>% print(n = 50)
   mutate(countryn = countrycode::countrycode(country, "iso2c", "country.name")) %>%
   ggplot(., aes(x = mid_survey, y = mean, ymin = mean-1.96*se, ymax = mean+1.96*se)) +
   geom_pointrange(fatten = 0.2, alpha = 0.5) +
@@ -308,4 +307,30 @@ eb_small_harm %>%
 
 ggsave("workflows/lrscale_countries_prior2004.png", height = 9, width = 11, scale = 1.1)
 ggsave("workflows/lrscale_countries_prior2004.jpg", height = 9, width = 11, scale = 1.1)
+
+
+
+
+eb_small_harm %>%
+  filter(country %in% countries_prior_2004) %>%
+  filter(!country %in% c("", "CY-TCC", "RS-KM", "DE-E", "DE-W", "GB-GBN", "GB-NIR", "GB", "DE")) %>%
+  group_by(archive_id, year, wave, mid_survey, country) %>%
+  summarise(mean = weighted.mean(is.na(lrscale), w = weight_cal)) %>%
+  filter(mean < 1) %>%
+  ungroup() %>%
+  mutate(countryn = countrycode::countrycode(country, "iso2c", "country.name")) %>%
+  ggplot(., aes(x = mid_survey, y = mean)) +
+  geom_point(size = 0.75) +
+  scale_x_date(name = "", breaks = "10 years", date_labels = "%Y", minor_breaks = "5 year") +
+  theme_minimal(14) +
+  ylab("Proportion of missing values") +
+  ylim(0, NA) +
+  facet_wrap("countryn") +
+  labs(title = "Left-right placement",
+       subtitle = "",
+       caption = paste0("'Don't know' answers and refusals combined. Weighted proportions.\nData source: Eurobarometer.\n", 
+                        "https://www.gesis.org/en/eurobarometer-data-service/search-data-access/data-access."))
+
+ggsave("workflows/lrscale_countries_prior2004_missing.png", height = 9, width = 11, scale = 1.1)
+ggsave("workflows/lrscale_countries_prior2004_missing.jpg", height = 9, width = 11, scale = 1.1)
 
