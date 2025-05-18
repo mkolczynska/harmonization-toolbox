@@ -19,7 +19,7 @@ This repository contains tables with survey metadata (variable names, variable l
 There are actually two lists:
 
 (1) `eb_var_names_labels.*` is a list of all variable names and labels taken from the data sets (metadata embedded in the Stata files, to be precise), as well as archive IDs, wave numbers and descriptions, and wave dates. The wave descriptions and dates come from GESIS-ZACAT and the GESIS data description pages (e.g. https://search.gesis.org/research_data/ZA8779).  
-**updated through EB100.2 (ZA8779), October-November 2023**
+**This list is being updated as new EB datasets are published by GESIS.**
 
 (2) `eb_var_groups_zacat.*` is a list of variable labels and variable groups from GESIS ZACAT matched to archive IDs and wave numbers and dates. The variable labels need not be identical to those in the actual data. The list may be incomplete (may not include all variables that are in the data) and contains occasional duplicated labels (same label in two different variable groups within the same EB wave).  
 **Last updated on 14 March 2022. Discontinued because of the end of [ZACAT GESIS](https://zacat.gesis.org/)**
